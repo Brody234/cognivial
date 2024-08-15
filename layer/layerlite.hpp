@@ -1,5 +1,9 @@
-#include <vector>
+#ifndef LAYERLITE_H
+#define LAYERLITE_H
+
 #include <random>
+#include <exception>
+#include <iostream>
 
 class LayerLite
 {
@@ -15,7 +19,7 @@ class LayerLite
         std::uniform_real_distribution<float> dis;
 
     public:
-        LayerLite(int this_layer, int next_layer, int prev_layer)
+        LayerLite(int prev_layer, int this_layer)
         : 
         gen(rd()),
         dis(0.0f, 1.0f)
@@ -23,6 +27,7 @@ class LayerLite
             biases = new float[this_layer];
             bias_size = this_layer;
             weight_size = prev_layer;
+            weight_inner_size = this_layer;
             weights = new float*[prev_layer];
             for(int i = 0; i < this_layer; i++){
                 biases[i] = 0.0f;
@@ -34,17 +39,18 @@ class LayerLite
                 }
             }
         }
-        float** forward(float** input){
-            int max = sizeof(input);
-            float** outputs = new float*[max];
-            input_save = new float*[max];
-            for(int k = 0; k < max; k++){
+        float** forwardTest(float** input, int samples){
+            float** outputs = new float*[samples];
+            input_save = new float*[samples];
+            for(int k = 0; k < samples; k++){
                 outputs[k] = new float[bias_size];
                 input_save[k] = new float[bias_size];
+                
                 for(int i = 0; i < bias_size; i++){
-                    outputs[i] = 0;
+                    outputs[k][i] = 0.0f;
                     for(int j = 0; j < weight_size; j++){
                         outputs[k][i] += input[k][j] * weights[j][i];
+                        //std::cout << input[k][j] << std::endl;
                         input_save[k][j] = input[k][j];
                     }
                     outputs[k][i] += biases[i];
@@ -54,24 +60,10 @@ class LayerLite
         }
         float** backward(float** dvalues){
             int max = sizeof(dvalues);
-            
+            float** output = new float*[1];
+            output[0] = new float[1];
+            return output;
         }
 };
 
-class LayerHeavy
-{
-    private:
-        double* biases;
-        int weight_size;
-    public:
-        LayerHeavy(int this_layer, int next_layer, int prev_layer){
-            biases = new double[this_layer];
-            for(int i = 0; i < this_layer; i++){
-                biases[i] = 0.0;
-            }
-        }
-};
-
-int main(){
-
-}
+#endif
