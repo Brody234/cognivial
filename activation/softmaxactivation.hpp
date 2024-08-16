@@ -16,13 +16,20 @@ class ActivationSoftMax
             for(int i = 0; i < samples; i++){
                 saved_inputs[i] = new float[prev_layer];
                 float sum = 0.0f;
+
+                float max_input = inputs[i][0];
+                for (int j = 1; j < prev_layer; j++) {
+                    if (inputs[i][j] > max_input) {
+                        max_input = inputs[i][j];
+                    }
+                }
+
                 for(int j = 0; j < prev_layer; j++){
                     saved_inputs[i][j] = inputs[i][j];
+                    inputs[i][j] = std::max(inputs[i][j] - max_input, -100.0f);
                     inputs[i][j] = exp(inputs[i][j]);
                     sum += inputs[i][j];
-                    //std::cout << j << inputs[i][j] << sum << std::endl;
                 }
-                //std::cout << sum << std::endl;
                 for(int j = 0; j < prev_layer; j++){
                     inputs[i][j] = inputs[i][j]/sum;
                 }

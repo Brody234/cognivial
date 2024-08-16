@@ -44,7 +44,7 @@ class LayerLite
             input_save = new float*[samples];
             for(int k = 0; k < samples; k++){
                 outputs[k] = new float[bias_size];
-                input_save[k] = new float[bias_size];
+                input_save[k] = new float[weight_size];
                 
                 for(int i = 0; i < bias_size; i++){
                     outputs[k][i] = 0.0f;

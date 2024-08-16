@@ -1,17 +1,24 @@
-#ifndef ACTIVATIONRELU_H
-#define ACTIVATIONRELU_H
+#ifndef ACTIVATIONLINEAR_H
+#define ACTIVATIONLINEAR_H
 
-class ActivationReLU
+class ActivationLinear
 {
     private:
-        float** saved_inputs;
-        float minimum;
+        float** saved_inputs = nullptr;
+        float m;
+        float b;
     public:
-        ActivationReLU(){
-            minimum = 0.0f;
+        ActivationLinear(){
+            m = 1;
+            b = 0;
         }
-        ActivationReLU(float minimumVal){
-            minimum = minimumVal;
+        ActivationLinear(float mVal){
+            m = mVal;
+            b = 0;
+        }
+        ActivationLinear(float mVal, float bVal){
+            m = mVal;
+            b = bVal;
         }
         float** forwardTest(float** inputs, int samples, int prev_layer){
             if(samples <= 0){
@@ -23,9 +30,7 @@ class ActivationReLU
                 saved_inputs[i] = new float[inMax];
                 for(int j = 0; j < prev_layer; j++){
                     saved_inputs[i][j] = inputs[i][j];
-                    if(inputs[i][j] < minimum){
-                        inputs[i][j] = minimum;
-                    }
+                    inputs[i][j] = (m*inputs[i][j])+b;
                 }
             }
             return inputs;

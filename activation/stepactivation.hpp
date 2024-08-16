@@ -1,17 +1,17 @@
-#ifndef ACTIVATIONRELU_H
-#define ACTIVATIONRELU_H
+#ifndef ACTIVATIONSTEP_H
+#define ACTIVATIONSTEP_H
 
-class ActivationReLU
+class ActivationStep
 {
     private:
-        float** saved_inputs;
-        float minimum;
+        float** saved_inputs = nullptr;
+        float bar;
     public:
-        ActivationReLU(){
-            minimum = 0.0f;
+        ActivationStep(){
+            bar = 0.0f;
         }
-        ActivationReLU(float minimumVal){
-            minimum = minimumVal;
+        ActivationStep(float barVal){
+            bar = barVal;
         }
         float** forwardTest(float** inputs, int samples, int prev_layer){
             if(samples <= 0){
@@ -23,8 +23,11 @@ class ActivationReLU
                 saved_inputs[i] = new float[inMax];
                 for(int j = 0; j < prev_layer; j++){
                     saved_inputs[i][j] = inputs[i][j];
-                    if(inputs[i][j] < minimum){
-                        inputs[i][j] = minimum;
+                    if(inputs[i][j] <= bar){
+                        inputs[i][j] = 0;
+                    }
+                    else{
+                        inputs[i][j] = 1;
                     }
                 }
             }
