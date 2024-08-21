@@ -1,8 +1,8 @@
-.vscode/
-testcode.cpp
-testcode
-testcode.dSYM/
-samplecode
-samplecode.dSYM/
-tutorial
-tutorial.dSYM/
+neuralnetwork/.vscode/
+neuralnetwork/testcode.cpp
+neuralnetwork/testcode
+neuralnetwork/testcode.dSYM/
+neuralnetwork/samplecode
+neuralnetwork/samplecode.dSYM/
+neuralnetwork/tutorial
+neuralnetwork/tutorial.dSYM/
