@@ -1,10 +1,11 @@
 #ifndef GENERATENUMBERS_H
 #define GENERATENUMBERS_H
 
-float** createDeterministicFloat4x4(){
-    float** testdata = new float*[4];
+template <typename NumType = float>
+NumType** createDeterministicArray4x4(){
+    NumType** testdata = new NumType*[4];
     for (int i = 0; i < 4; ++i) {
-        testdata[i] = new float[4];
+        testdata[i] = new NumType[4];
     }
 
     testdata[0][0] = -0.9f; testdata[0][1] = -0.5f; testdata[0][2] = 0.0f; testdata[0][3] = 0.2f;
@@ -14,10 +15,11 @@ float** createDeterministicFloat4x4(){
     return testdata;
 }
 
-float** createDeterministicFloat4x3(){
-    float** testdata = new float*[4];
+template <typename NumType = float>
+NumType** createDeterministicArray4x3(){
+    NumType** testdata = new NumType*[4];
     for (int i = 0; i < 4; ++i) {
-        testdata[i] = new float[3];
+        testdata[i] = new NumType[3];
     }
 
     testdata[0][0] = -0.9f; testdata[0][1] = -0.5f; testdata[0][2] = 0.0f;
@@ -28,10 +30,11 @@ float** createDeterministicFloat4x3(){
     return testdata;
 }
 
-float** createDeterministicFloat3x4(){
-    float** testdata = new float*[4];
+template <typename NumType = float>
+NumType** createDeterministicArray3x4(){
+    NumType** testdata = new NumType*[4];
     for (int i = 0; i < 4; ++i) {
-        testdata[i] = new float[3];
+        testdata[i] = new NumType[3];
     }
 
     testdata[0][0] = -0.9f; testdata[0][1] = -0.5f; testdata[0][2] = 0.0f; testdata[0][3] = 0.2f;

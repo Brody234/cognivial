@@ -4,59 +4,64 @@
 #include <random>
 #include <exception>
 #include <iostream>
+#include <cmath>
 #include "../utilities/matrixutility.hpp"
 #include "../utilities/vectorutility.hpp"
 #include "../testdata/viewer.hpp"
 
+template <typename NumType = float>
 class LayerLite
 {
     private:
-        float** input_save;
-        float** dinputs = nullptr;
+        NumType** input_save;
         int saved_samples;
         std::random_device rd;
         std::mt19937 gen;
-        std::uniform_real_distribution<float> dis;
+        std::uniform_real_distribution<NumType> dis;
 
     public:
-        float* biases;
-        float** weights;
+        NumType** dinputs = nullptr;
 
-        float** dweights = nullptr ;
-        float* dbiases = nullptr;
+        NumType* biases;
+        NumType** weights;
 
+        NumType** outputs;
+
+        NumType** dweights = nullptr;
+        NumType* dbiases = nullptr;
+        
         int bias_size;
         int weight_size;
         int weight_inner_size;
 
         LayerLite(int prev_layer, int this_layer)
         : 
-        dis(-1.0f, 1.0f)
+        dis(-sqrt(6.0f/(prev_layer+this_layer)), sqrt(6.0f/(prev_layer+this_layer)))
         {
-            gen.seed(42);
-            biases = new float[this_layer];
+            gen.seed(rd());
+            biases = new NumType[this_layer];
             bias_size = this_layer;
             weight_size = prev_layer;
             weight_inner_size = this_layer;
-            weights = new float*[prev_layer];
+            weights = new NumType*[prev_layer];
             for(int i = 0; i < this_layer; i++){
                 biases[i] = 0.0f;
             }
             for(int i = 0; i < prev_layer; i++){
-                weights[i] = new float[this_layer];
+                weights[i] = new NumType[this_layer];
                 for(int j = 0; j < this_layer; j++){
                     weights[i][j]= 0.5f*dis(gen);
                 }
             }
         }
-        float** forwardTest(float** input, int samples){
+        NumType** forwardTest(NumType** input, int samples){
             saved_samples = samples;
             //print_weights();
-            float** outputs = new float*[samples];
-            input_save = new float*[samples];
+            outputs = new NumType*[samples];
+            input_save = new NumType*[samples];
             for(int k = 0; k < samples; k++){
-                outputs[k] = new float[bias_size];
-                input_save[k] = new float[weight_size];
+                outputs[k] = new NumType[bias_size];
+                input_save[k] = new NumType[weight_size];
                 
                 for(int i = 0; i < bias_size; i++){
                     outputs[k][i] = 0.0f;
@@ -70,13 +75,13 @@ class LayerLite
             }
             return outputs;
         }
-        float** backward(float** dvalues){
+        NumType** backward(NumType** dvalues){
             if (dbiases != nullptr && dbiases != NULL) {
                 delete [] dbiases;  // Free previously allocated dweights
                 dbiases = nullptr;
             }
 
-            dbiases = new float[bias_size];
+            dbiases = new NumType[bias_size];
             for(int j = 0; j < bias_size; j++){
                     dbiases[j] = dvalues[0][j];
             }
@@ -111,11 +116,11 @@ class LayerLite
         void print_biases(){
             matrixViewer(biases, bias_size);
         }
-        float** get_weights(){
+        NumType** get_weights(){
             //std::cout << "COPYING" << std::endl;
             return copyMatrix(weights, weight_size, weight_inner_size);
         }
-        float* get_biases(){
+        NumType* get_biases(){
             return copyVector(biases, bias_size);
         }
 };

@@ -3,20 +3,23 @@
 #include <cmath>
 #include <iostream>
 
-float vectorSum(float* vector, int components){
-    float sum = 0.0f;
+template <typename NumType = float>
+NumType vectorSum(NumType* vector, int components){
+    NumType sum = 0.0f;
     for(int i = 0; i < components; i++){
         sum += vector[i];
     }
     return sum;
 }
 
-float vectorMean(float* vector, int components){
+template <typename NumType = float>
+NumType vectorMean(NumType* vector, int components){
     return vectorSum(vector, components)/components;
 }
 
-float* vectorClip(float* vector, int components, float maxClip, float minClip){
-    float clipper = exp(-7);
+template <typename NumType = float>
+NumType* vectorClip(NumType* vector, int components, NumType maxClip, NumType minClip){
+    NumType clipper = exp(-7);
     maxClip -= clipper;
     minClip += clipper;
     for(int i = 0; i < components; i++){
@@ -30,32 +33,37 @@ float* vectorClip(float* vector, int components, float maxClip, float minClip){
     return vector;
 }
 
-float* vectorLog(float* vector, int components){
+template <typename NumType = float>
+NumType* vectorLog(NumType* vector, int components){
     for(int i = 0; i < components; i++){
         vector[i] = log(vector[i]);
     }
     return vector;
 }
 
-float* vectorLogNeg(float* vector, int components){
-    for(int i = 0; i < components; i++){
-        //std::cout << vector[i] << std::endl;
-        vector[i] = -log(vector[i]);
-        //std::cout << vector[i] << std::endl;
-    }
-    return vector;
-}
-
 // Creates an identical matrix with copied values on a different address.
-float* copyVector(float* vector, int components){
-    float* copied = new float[components];
+template <typename NumType = float>
+NumType* copyVector(NumType* vector, int components){
+    NumType* copied = new NumType[components];
     for(int i = 0; i < components; i++){
         copied[i] = vector[i];
     }
     return copied;
 }
 
-void clearVector(float* vector){
+template <typename NumType = float>
+NumType* vectorLogNeg(NumType* vector, int components){
+    NumType* newVect = copyVector(vector, components);
+    for(int i = 0; i < components; i++){
+        //std::cout << vector[i] << std::endl;
+        newVect[i] = -log(vector[i]);
+        //std::cout << vector[i] << std::endl;
+    }
+    return newVect;
+}
+
+template <typename NumType = float>
+void clearVector(NumType* vector){
     if (vector != nullptr) {
         delete[] vector;
         vector = nullptr;

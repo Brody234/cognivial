@@ -4,48 +4,56 @@
 #include <iostream>
 #include "../utilities/matrixutility.hpp"
 
-class ActivationSoftMax
+template <typename NumType = float>
+class ActivationSoftMax : public BaseActivation<NumType>
 {
     private:
-        float** outputs = nullptr;
+        int saved_samples;
+        int saved_prev_layer;
     public:
-        float** forwardTest(float** inputs, int samples, int prev_layer){
+        NumType** forwardTest(NumType** inputs, int samples, int prev_layer) override{
             //matrixViewer(inputs, samples, prev_layer);
-
+            saved_samples = samples;
+            saved_prev_layer = prev_layer;
             if(samples <= 0){
-                return new float*[0];
+                return new NumType*[0];
             }
-            if(outputs != nullptr){
-                clearMatrix(outputs, samples);
-                outputs = nullptr;
+            if(this->outputs != nullptr){
+                clearMatrix(this->outputs, samples);
+                this->outputs = nullptr;
             }
-            outputs = new float*[samples];
+            this->outputs = new NumType*[samples];
             for(int i = 0; i < samples; i++){
-                outputs[i] = new float[prev_layer];
-                float sum = 0.0f;
-                float max = inputs[i][0];
+                this->outputs[i] = new NumType[prev_layer];
+                NumType sum = 0.0f;
+                NumType max = inputs[i][0];
                 for(int j = 1; j < prev_layer; j++){
-                    max = inputs[i][j];
+                    if(max < inputs[i][j]){
+                        max = inputs[i][j];
+                    }
                 }
                 for(int j = 0; j < prev_layer; j++){
-                    outputs[i][j] = exp(inputs[i][j] - max);
-                    sum += outputs[i][j];
+                    this->outputs[i][j] = exp(inputs[i][j]-max);
+                    sum += this->outputs[i][j];
                 }
                 for(int j = 0; j < prev_layer; j++){
-                    outputs[i][j] = outputs[i][j]/(sum+1e-7);
+                    if(i== 0 && j == 0){
+                        //std::cout << sum << std::endl;
+                    }
+                    this->outputs[i][j] = this->outputs[i][j]/(sum+1e-7);
                 }
             }
-            return outputs;
+            return this->outputs;
         }
-        float** backward(float** dvalues, int samples, int prev_layer){
-            float** dinputs = new float*[samples];
-            for(int i = 0; i < samples; i++){
-                dinputs[i] = dvalsXJacobian(outputs[i], prev_layer, dvalues[i]); 
+        NumType** backward(NumType** dvalues) override{
+            this->dinputs = new NumType*[saved_samples];
+            for(int i = 0; i < saved_samples; i++){
+                this->dinputs[i] = dvalsXJacobian(this->outputs[i], saved_prev_layer, dvalues[i]); 
                 //std::cout << "DINPUT OF SOFTMAX" << std::endl;
                 //std::cout << dinputs[i][0] << std::endl;
             }
-            matrixViewer(dinputs, 3, prev_layer);
-            return dinputs;
+            //matrixViewer(dinputs, samples, 2);
+            return this->dinputs;
         }
 };
 

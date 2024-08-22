@@ -1,3 +1,4 @@
+#include "uni/allsettings.hpp"
 #include "layer/layerlite.hpp"
 #include "testdata/generatenumbers.hpp"
 #include "testdata/viewer.hpp"
@@ -18,19 +19,19 @@ int main(){
 
 
     // Create a 3 samples of 4 neurons. These are not labeled and are simply for making sure data can make it through forward passes.
-    float** rawdata = createDeterministicFloat3x4();
+    NumType** rawdata = createDeterministicArray3x4();
 
     // Let's now use the matrixViewer function to analyze our traindata
-    std::cout << "The createDeterministicFloat3x4 matrix:" << std::endl; // std:couts are so you can follow along in the terminal if you wish.
+    std::cout << "The createDeterministicArray3x4 matrix:" << std::endl; // std:couts are so you can follow along in the terminal if you wish.
     matrixViewer(rawdata, 3, 4);
     // Notice how the first argument is the number of arrays, the second is the length of the arrays in each matrix.
     // This can be used for any matrix.
 
     // Let's create some more samples. All 3 of these functions are for creating raw data purely to see how passing data works.
-    float** rawdata2 = createDeterministicFloat4x4();
+    NumType** rawdata2 = createDeterministicArray4x4();
     std::cout << "The createDeterministicFloat4x4 matrix:" << std::endl;
     matrixViewer(rawdata2, 4, 4);
-    float** rawdata3 = createDeterministicFloat4x3();
+    NumType** rawdata3 = createDeterministicArray4x3();
     std::cout << "The createDeterministicFloat4x3 matrix:" << std::endl;
     matrixViewer(rawdata3, 4, 3);
 
@@ -74,7 +75,7 @@ int main(){
     */
 
     // ReLU with 0 as minimum RECOMMENDED
-    float** activate1 = copyMatrix(rawdata, 3, 4); // copy rawdata, as relu would modify it otherwise.
+    NumType** activate1 = copyMatrix(rawdata, 3, 4); // copy rawdata, as relu would modify it otherwise.
     ActivationReLU relu; // declare relu with no minimum/0 as the minimum.
     relu.forwardTest(activate1, 3, 4); // Run ReLU on the data. Array, Rows, Cols.
     std::cout << "The rawdata matrix with relu:" << std::endl;
@@ -82,7 +83,7 @@ int main(){
     clearMatrix(activate1, 3); //and free up our memory
 
     // ReLU with a custom minimum NOT RECOMMENDED
-    float** activate2 = copyMatrix(rawdata, 3, 4); // copy rawdata, as relu would modify it otherwise.
+    NumType** activate2 = copyMatrix(rawdata, 3, 4); // copy rawdata, as relu would modify it otherwise.
     ActivationReLU relu8Min(0.8f); // declare relu with minimum 0.8f. This is really high and will likely result in mostly 0s. This is to show you the difference between 0 and 0.8f regardless of what's generated.
     relu8Min.forwardTest(activate2, 3, 4); // Run ReLU on the data.
     std::cout << "The rawdata matrix with relu(0.8f) aka max(0.8f):" << std::endl;
@@ -95,7 +96,7 @@ int main(){
      * Here's an example of SoftMax.
     */
 
-    float** activate3 = copyMatrix(rawdata, 3, 4); // copy rawdata, as softmax would modify it otherwise.
+    NumType** activate3 = copyMatrix(rawdata, 3, 4); // copy rawdata, as softmax would modify it otherwise.
     ActivationSoftMax soft; // create a softmax. There are no constructor arguments.
     soft.forwardTest(activate3, 3, 4); // Run softmax on the data.
     std::cout << "The rawdata matrix softmax:" << std::endl;
@@ -106,10 +107,10 @@ int main(){
      * Here's an example of a Network, featuring a flow of frontpasses.
     */
 
-    float** input_layer = copyMatrix(rawdata, 3, 4); // Remember, "input layers" are just arrays to be put into the first real layer.
-    float** output_of_layer_1 = hidden_layer_1.forwardTest(input_layer, number_of_samples); // Apply the layer's math to data_pass.
+    NumType** input_layer = copyMatrix(rawdata, 3, 4); // Remember, "input layers" are just arrays to be put into the first real layer.
+    NumType** output_of_layer_1 = hidden_layer_1.forwardTest(input_layer, number_of_samples); // Apply the layer's math to data_pass.
     relu.forwardTest(output_of_layer_1, number_of_samples, number_of_neurons_in_hidden_1); // Remember, we don't have to save the return value for activations.
-    float** output_of_layer_2 = hidden_layer_2.forwardTest(output_of_layer_1, number_of_samples);
+    NumType** output_of_layer_2 = hidden_layer_2.forwardTest(output_of_layer_1, number_of_samples);
     soft.forwardTest(output_of_layer_2, number_of_samples, number_of_neurons_in_hidden_2);
     std::cout << "The rawdata matrix being put through 2 layers of random weights, a ReLU and a SoftMax:" << std::endl;
     matrixViewer(output_of_layer_2, number_of_samples, number_of_neurons_in_hidden_2); // Had this model done anything, we might get some cool data here. In a trained model, the rows you see would be each sample, and the columns would be a different classification.

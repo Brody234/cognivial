@@ -3,7 +3,8 @@
 #include <iostream>
 
 
-void matrixViewer(float** matrix, int row, int col){
+template <typename NumType = float>
+void matrixViewer(NumType** matrix, int row, int col){
     std::cout << "[" << std::endl;
     //std::cout << row << std::endl;
     //std::cout << col << std::endl;
@@ -19,6 +20,7 @@ void matrixViewer(float** matrix, int row, int col){
     
 }
 
+template <typename NumType = float>
 void matrixViewer(int** matrix, int row, int col){
     std::cout << "[" << std::endl;
     for(int i = 0; i < row; i++){
@@ -32,7 +34,8 @@ void matrixViewer(int** matrix, int row, int col){
     
 }
 
-void matrixViewer(float* vector, int components){
+template <typename NumType = float>
+void matrixViewer(NumType* vector, int components){
     std::cout << "[ ";
     for(int i = 0; i < components; i++){
         std::cout << " " << vector[i] << " ";
@@ -41,6 +44,7 @@ void matrixViewer(float* vector, int components){
     
 }
 
+template <typename NumType = float>
 void matrixViewer(int* vector, int components){
     std::cout << "[ ";
     for(int i = 0; i < components; i++){
@@ -50,7 +54,8 @@ void matrixViewer(int* vector, int components){
     
 }
 
-void parallelVectorizer(float* vector1, float* vector2, int components){
+template <typename NumType = float>
+void parallelVectorizer(NumType* vector1, NumType* vector2, int components){
     std::cout << "[ ";
     for(int i = 0; i < components; i++){
         std::cout << " " << vector1[i] << " : " << vector2[i] << " ";

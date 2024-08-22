@@ -1,0 +1,312 @@
+    /*
+    LayerLite layer(3, 3);
+
+    // Define input data (3 samples, each with 3 features)
+    float** inputs = new float*[3];
+    inputs[0] = new float[3]{1.0f, 2.0f, 3.0f};  // Sample 1
+    inputs[1] = new float[3]{4.0f, 5.0f, 6.0f};  // Sample 2
+    inputs[2] = new float[3]{7.0f, 8.0f, 9.0f};  // Sample 3
+
+    // Perform a forward pass
+    float** outputs = layer.forwardTest(inputs, 3);
+
+    // Print the forward pass output
+    std::cout << "Forward pass output:" << std::endl;
+    matrixViewer(outputs, 3, 3);
+
+    // Define gradient (dvalues) for the backward pass (for simplicity, using an identity gradient)
+    float** dvalues = new float*[3];
+    dvalues[0] = new float[3]{1.0f, 0.0f, 0.0f};  // Gradient for Sample 1
+    dvalues[1] = new float[3]{0.0f, 1.0f, 0.0f};  // Gradient for Sample 2
+    dvalues[2] = new float[3]{0.0f, 0.0f, 1.0f};  // Gradient for Sample 3
+
+    // Perform a backward pass
+    float** dinputs = layer.backward(dvalues);
+
+    // Print the backward pass output (gradient with respect to input)
+    std::cout << "Backward pass output (gradient wrt input):" << std::endl;
+    matrixViewer(dinputs, 3, 3);
+
+    
+    /*float** inputs = new float*[3];
+    inputs[0] = new float[3]{1.0f, 2.0f, 3.0f};
+    inputs[1] = new float[3]{1.5f, 2.5f, 0.5f};
+    inputs[2] = new float[3]{0.1f, 0.2f, 0.3f};
+
+    // Example dvalues (gradients from next layer)
+    float** dvalues = new float*[3];
+    dvalues[0] = new float[3]{1.0f, 0.0f, 0.0f};
+    dvalues[1] = new float[3]{0.0f, 1.0f, 0.0f};
+    dvalues[2] = new float[3]{0.0f, 0.0f, 1.0f};
+
+    ActivationSoftMax softmax;
+    float** softmax_outputs = softmax.forwardTest(inputs, 3, 3);
+    matrixViewer(softmax_outputs, 3, 3);
+    float** dinputs = softmax.backward(dvalues, 3, 3);
+    matrixViewer(dinputs, 3, 3);
+
+    */
+    /*int num_samples = 100;
+    int layer_1_neurons = 5;
+    int layer_2_neurons = 2;
+    float totalacc = 0.0f;
+    int iterations = 30;
+    std::cout << "Running" << std::endl;
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    LayerLite* input1 = new LayerLite(2, layer_1_neurons);
+    LayerLite* input2 = new LayerLite(layer_1_neurons, layer_2_neurons);
+
+    ActivationReLU relu1;
+    ActivationSoftMax soft;
+
+    LossCCE* cce = new LossCCE();;
+    OptimizerSGD sgd(0.5f, false, 0.1f);
+    OptimizerRandom rdm1(.05, input1);
+    OptimizerRandom rdm2(.05, input2);
+
+    DataSetSingleClassNeurons trainingset = createLinearSamplesEven(num_samples);
+
+    float best_acc = 0.0f;
+    int best_acc_count = 0;
+    float best_loss = 500.0f;
+
+    for(int i = 0; i < iterations; i++){
+        std::cout << "Iteration " << i << std::endl;
+        input1->print_weights();
+        input2->print_weights();
+        //input2->print_biases();
+        float** output1 = input1->forwardTest(trainingset.x_values, num_samples);
+        float** output4 = relu1.forwardTest(output1, num_samples, layer_1_neurons);
+        float** output2 = input2->forwardTest(output4, num_samples);
+        float** output3 = soft.forwardTest(output2, num_samples, layer_2_neurons);
+        
+        float mean = cce->forwardTest(output3, num_samples, layer_2_neurons, trainingset.y_values);
+        float acc = accuracy(output3, trainingset.y_values, num_samples, layer_2_neurons);
+        if(i%1 == 0 || acc == 1.0f){
+            std::cout << acc << std::endl;
+            std::cout << mean << std::endl;
+            //input2->print_weights();
+        }
+
+        
+        float** dvalues = cce->backward(num_samples, trainingset.y_values);
+
+        //matrixViewer(dvalues, num_samples, layer_2_neurons);
+        float** dvaluesSoft = soft.backward(dvalues, num_samples, layer_2_neurons);
+        //matrixViewer(dvaluesSoft, 3, 2);
+
+        float** dvaluesOutput2 = input2->backward(dvaluesSoft);
+        //matrixViewer(dvaluesOutput2, num_samples, 5);
+
+        float** dvaluesRelu = relu1.backward(dvaluesOutput2);
+
+        float** dvaluesOutput1 = input1->backward(dvaluesRelu);
+
+        //matrixViewer(dvaluesOutput2, num_samples, 5);
+        
+        //clearMatrix(dvalues, num_samples);
+        sgd.preupdate();
+        sgd.optimize_layer(input1);
+        sgd.optimize_layer(input2);
+        /*
+        rdm1.optimize_layer(input1, mean);
+        rdm2.optimize_layer(input2, mean); 
+        clearMatrix(dvalues, num_samples);
+        dvalues = nullptr;
+        clearMatrix(dvaluesSoft, num_samples);
+        dvaluesSoft = nullptr;
+        clearMatrix(dvaluesOutput1, num_samples);
+        dvaluesOutput1 = nullptr;
+        clearMatrix(dvaluesRelu, num_samples);
+        dvaluesRelu = nullptr;
+        clearMatrix(dvaluesOutput2, num_samples);
+        dvaluesOutput2 = nullptr;
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> duration = end - start;
+
+    std::cout << "Execution Time: " << duration.count() << " seconds" << std::endl;
+
+    //float majoracc = totalacc / iterations;
+    //std::cout << "Overall Accuracy: " << majoracc << std::endl;
+
+    // Clean up memory
+    delete input1;
+    delete input2;
+    delete cce;
+    return 0;*/
+   /* NumType average_best_acc=0.0f;
+
+
+    for(int fort = 0; fort < 1; fort++){
+    int num_samples = 100;
+    int neurons = 2;
+    NumType totalacc = 0.0f;
+    int iterations = 50001;
+    std::cout << "Running" << std::endl;
+
+    auto start = std::chrono::high_resolution_clock::now();
+    LayerLite* input = new LayerLite(2, 4);
+
+    ActivationReLU relu;
+
+    ActivationLeakyReLU leaky(.02);
+
+    ActivationPReLU prelu(.25, 4, true);
+
+    LayerLite* layer = new LayerLite(4, 2);
+
+    ActivationSoftMax soft;
+
+    LossCCE* cce = new LossCCE();
+    
+
+    OptimizerSGD sgd(0.03f, false, 0.0f);
+    OptimizerRandom rdm1(.005, layer);
+
+    DataSetSingleClassNeurons trainingset = createLinearSamplesEven(num_samples);
+
+    NumType best_acc = 0.0f;
+    NumType init_acc = 0.0f;
+    NumType best_loss_acc = 0.0f;
+    int best_rep = 0;
+    int best_acc_count = 0;
+    NumType best_loss = 5000.0f;
+    int best_loss_rep = 0;
+    NumType best_acc_loss = 0.0f;
+    NumType init_loss = 0.0f;
+
+    NumType delta = 0.0f;
+    int greatestChange = 0;
+
+    for(int i = 0; i < iterations; i++){
+        std::cout << "Iteration " << i << std::endl;
+        //input1->print_weights();
+        //input2->print_weights();
+        //input2->print_biases();
+        NumType** inputout = input->forwardTest(trainingset.x_values, num_samples);
+        NumType** reluout = prelu.forwardTest(inputout, num_samples, 4);
+        NumType** layerout = layer->forwardTest(reluout, num_samples);
+        NumType** softout = soft.forwardTest(layerout, num_samples, neurons);
+        
+        
+        NumType mean = cce->forwardTest(softout, num_samples, neurons, trainingset.y_values);
+        NumType acc = accuracy(softout, trainingset.y_values, num_samples, neurons);
+        std::cout << acc << std::endl;
+        if(i%109 == 0 || acc == 1.0f){
+            std::cout << acc << std::endl;
+            std::cout << mean << std::endl;
+            layer->print_weights();
+            layer->print_biases();
+
+        }
+
+        if(i == 0){
+            init_acc = acc;
+            init_loss = mean;
+        }
+        
+        if(acc > best_acc){
+            //std::cout << "I AM ITERING" << std::endl;
+            best_acc = acc;
+            best_rep = i;
+            best_loss_acc = mean;
+        }
+
+        if(mean < best_loss){
+            best_loss_rep = i;
+            best_loss = mean;
+            best_acc_loss = acc;
+        }
+
+        NumType** dvalues = cce->backward(neurons, trainingset.y_values, softout);
+        
+
+        if(i == 0 || i== 25 || i == 50){
+            //matrixViewer(dvalues, num_samples, 2);
+        }
+
+        //matrixViewer(dvalues, num_samples, layer_2_neurons);
+        NumType** dvaluesSoft = soft.backward(dvalues, num_samples, neurons);
+        //matrixViewer(dvaluesSoft, 3, 2);
+
+
+
+        NumType** dvaluesLayer = layer->backward(dvaluesSoft);
+
+        NumType meanABS = matrixAbsMean(dvaluesLayer, num_samples, 4);
+        NumType** dvaluesRelu = prelu.backward(dvaluesLayer);
+
+        NumType** dvaluesInput = input->backward(dvaluesRelu);
+        //matrixViewer(dvaluesOutput2, num_samples, 5);
+
+
+        //matrixViewer(dvaluesOutput2, num_samples, 5);
+        
+        //clearMatrix(dvalues, num_samples);
+        sgd.preupdate();
+        sgd.optimize_layer(layer);
+        sgd.optimize_prelu(prelu);
+        sgd.optimize_layer(input);
+
+
+        //std::cout << meanABS << std::endl;
+        if(meanABS > delta){
+            delta = meanABS;
+            greatestChange = i;
+        }
+        //rdm1.optimize_layer(layer, mean);
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<NumType> duration = end - start;
+
+    std::cout << "Execution Time: " << duration.count() << " seconds" << std::endl;
+
+    std::cout << "Greatest Change: " << greatestChange << " epoch" << std::endl;
+    std::cout << "The best accuracy " << best_acc << " was found in epoch #" << best_rep << " with a loss of "<< best_loss_acc << " and with initial accuracy of " << init_acc << std::endl;
+    std::cout << "The best loss " << best_loss << " was found in epoch #" << best_loss_rep << " with a accuracy of "<< best_acc_loss << " and with initial loss of " << init_loss << std::endl;
+    average_best_acc+= best_acc;
+    //NumType majoracc = totalacc / iterations;
+    //std::cout << "Overall Accuracy: " << majoracc << std::endl;
+
+    // Clean up memory
+    delete input;
+    delete layer;
+    delete cce;
+    }
+    /*float** matrix = new float*[3];
+    matrix[0] = new float[2];
+    matrix[1] = new float[2];
+    matrix[2] = new float[2];
+
+    // Initialize the matrix elements
+    matrix[0][0] = 1;
+    matrix[0][1] = 2;
+    matrix[1][0] = 3;
+    matrix[1][1] = 4;
+    matrix[2][0] = 5;
+    matrix[2][1] = 6;
+
+    float** matrix2 = new float*[2];
+    matrix2[0] = new float[2];
+    matrix2[1] = new float[2];
+
+    // Initialize the matrix elements with 5, 6, 7, 8
+    matrix2[0][0] = 5;
+    matrix2[0][1] = 6.0f;
+    //matrix2[0][2] = 7;
+    matrix2[1][0] = 8;
+    matrix2[1][1] = 9;
+    //matrix2[1][2] = 10;
+
+    
+
+
+
+
+    matrixViewer(matrixDotProductTranspose(matrix2, matrix, 2, 2, 3), 2, 3);
+    std::cout << average_best_acc/100 << std::endl;*/

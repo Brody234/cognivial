@@ -1,19 +1,21 @@
 #ifndef DATASET_H
 #define DATASET_H
 
+template <typename NumType = float>
 struct DataSetMultiClassNeurons{
-    float** x_values;
+    NumType** x_values;
     int** y_values;
 };
 
+template <typename NumType = float>
 struct DataSetSingleClassNeurons{
-    float** x_values;
+    NumType** x_values;
     int* y_values;
 };
-
+template <typename NumType = float>
 struct DataSetNoClassNeurons{
-    float** x_values;
-    float** y_values;
+    NumType** x_values;
+    NumType** y_values;
 };
 
 #endif

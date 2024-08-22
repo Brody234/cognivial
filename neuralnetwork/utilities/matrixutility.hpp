@@ -3,9 +3,11 @@
 
 #include <cmath>
 #include <iostream>
+#include "../testdata/viewer.hpp"
 
 // Deletes a matrix from memory.
-void clearMatrix(float** matrix, int row){
+template <typename NumType = float>
+void clearMatrix(NumType** matrix, int row){
     if (matrix != nullptr) {
         for(int i = 0; i < row; i++) {
             if (matrix[i] != nullptr) {
@@ -19,10 +21,11 @@ void clearMatrix(float** matrix, int row){
 }
 
 // Creates an identical matrix with copied values on a different address.
-float** copyMatrix(float** matrix, int row, int col){
-    float** copied = new float*[row];
+template <typename NumType = float>
+NumType** copyMatrix(NumType** matrix, int row, int col){
+    NumType** copied = new NumType*[row];
     for(int i = 0; i < row; i++){
-        copied[i] = new float[col];
+        copied[i] = new NumType[col];
         for(int j = 0; j < col; j++){
             copied[i][j] = matrix[i][j];
         }
@@ -31,8 +34,9 @@ float** copyMatrix(float** matrix, int row, int col){
 }
 
 // Calculates the sum of elements in a matrix.
-float matrixSum(float** matrix, int row, int col){
-    float sum = 0.0f;
+template <typename NumType = float>
+NumType matrixSum(NumType** matrix, int row, int col){
+    NumType sum = 0.0f;
     for(int i = 0; i < row; i++){
         for(int j = 0; j < col; j++){
             sum += matrix[i][j];
@@ -42,14 +46,16 @@ float matrixSum(float** matrix, int row, int col){
 }
 
 // Calculates the mean of the elements in a matrix.
-float matrixMean(float** matrix, int row, int col){
+template <typename NumType = float>
+NumType matrixMean(NumType** matrix, int row, int col){
     int total = row*col;
     return matrixSum(matrix, row, col)/total;
 }
 
 // Takes every value in a matrix and clips it between maxClip - e^-50 and minClip + e^-50.
-float** matrixClip(float** matrix, int row, int col, float maxClip, float minClip){
-    float clipper = 1e-7;
+template <typename NumType = float>
+NumType** matrixClip(NumType** matrix, int row, int col, NumType maxClip, NumType minClip){
+    NumType clipper = 1e-7;
     maxClip -= clipper;
     minClip += clipper;
     for(int i = 0; i < row; i++){
@@ -66,7 +72,8 @@ float** matrixClip(float** matrix, int row, int col, float maxClip, float minCli
 }
 
 // Directly modifies matrix passed. Sets every value to the ln of said value.
-float** matrixLog(float** matrix, int row, int col){
+template <typename NumType = float>
+NumType** matrixLog(NumType** matrix, int row, int col){
     for(int i = 0; i < row; i++){
         for(int j = 0; j < col; j++){
             matrix[i][j] = log(matrix[i][j]);
@@ -76,7 +83,8 @@ float** matrixLog(float** matrix, int row, int col){
 }
 
 // Directly modifies the passed matrix. Sets every value to the negative ln of said value.
-float** matrixLogNeg(float** matrix, int row, int col){
+template <typename NumType = float>
+NumType** matrixLogNeg(NumType** matrix, int row, int col){
     for(int i = 0; i < row; i++){
         for(int j = 0; j < col; j++){
             matrix[i][j] = -log(matrix[i][j]);
@@ -86,8 +94,10 @@ float** matrixLogNeg(float** matrix, int row, int col){
 }
 
 // Returns a vector of length rows, each component is the inverse log of it's respective row.
-float* matrixLogNegVectorSum(float** matrix, int row, int col){
-    float* vectorSum = new float[row];
+template <typename NumType = float>
+NumType* matrixLogNegVectorSum(NumType** matrix, int row, int col){
+    NumType* vectorSum = new NumType[row];
+    //std::cout << "row " << row << " col " << col << std::endl;
     for(int i = 0; i < row; i++){
         vectorSum[i] = 0.0f;
         for(int j = 0; j < col; j++){
@@ -99,10 +109,11 @@ float* matrixLogNegVectorSum(float** matrix, int row, int col){
 }
 
 // A+B
-float** matrixAdd(float** matrixA, float** matrixB, int row, int col){
-    float** matrixC = new float*[row];
+template <typename NumType = float>
+NumType** matrixAdd(NumType** matrixA, NumType** matrixB, int row, int col){
+    NumType** matrixC = new NumType*[row];
     for(int i = 0; i < row; i++){
-        matrixC[i] = new float[col];
+        matrixC[i] = new NumType[col];
         for(int j = 0; j < col; j++){
             matrixC[i][j] =matrixA[i][j] + matrixB[i][j];
         }
@@ -111,10 +122,11 @@ float** matrixAdd(float** matrixA, float** matrixB, int row, int col){
 }
 
 // A-B
-float** matrixSubtract(float** matrixA, float** matrixB, int row, int col){
-    float** matrixC = new float*[row];
+template <typename NumType = float>
+NumType** matrixSubtract(NumType** matrixA, NumType** matrixB, int row, int col){
+    NumType** matrixC = new NumType*[row];
     for(int i = 0; i < row; i++){
-        matrixC[i] = new float[col];
+        matrixC[i] = new NumType[col];
         for(int j = 0; j < col; j++){
             matrixC[i][j] =matrixA[i][j] - matrixB[i][j];
         }
@@ -130,10 +142,11 @@ float** matrixSubtract(float** matrixA, float** matrixB, int row, int col){
 */
 
 // A dot B
-float** matrixDotProduct(float** matrixA, float** matrixB, int colArowB, int rowA, int colB){
-    float** matrixC = new float*[rowA];
+template <typename NumType = float>
+NumType** matrixDotProduct(NumType** matrixA, NumType** matrixB, int colArowB, int rowA, int colB){
+    NumType** matrixC = new NumType*[rowA];
     for(int i = 0; i < rowA; i++){
-        matrixC[i] = new float[colB];
+        matrixC[i] = new NumType[colB];
         for(int k = 0; k < colB; k++){
             matrixC[i][k] = 0.0f;
         }
@@ -147,25 +160,33 @@ float** matrixDotProduct(float** matrixA, float** matrixB, int colArowB, int row
 }
 
 // AT*B
-float** matrixDotTransposeProduct(float** matrixA, float** matrixB, int rowArowB, int colA, int colB){
-    float** matrixC = new float*[colA];
+template <typename NumType = float>
+NumType** matrixDotTransposeProduct(NumType** matrixA, NumType** matrixB, int rowArowB, int colA, int colB){
+    NumType** matrixC = new NumType*[colA];
     for(int i = 0; i < colA; i++){
-        matrixC[i] = new float[colB];
+        matrixC[i] = new NumType[colB];
         for(int k = 0; k < colB; k++){
             matrixC[i][k] = 0.0f;
             for(int j = 0; j < rowArowB; j++){
+                if(matrixB[j][k] < 0){
+                    //std::cout<< "j " << j << " k "<< k << std::endl;
+
+                }
                 matrixC[i][k] += matrixA[j][i] * matrixB[j][k];
+                //std::cout << "C += " << matrixA[j][i] << " * " << matrixB[j][k] << " = " << matrixA[j][i] * matrixB[j][k] << std::endl;
             }
+            //std::cout << "C: " << matrixC[i][k] << std::endl;
         }
     }
     return matrixC;
 }
 
 // A*BT
-float** matrixDotProductTranspose(float** matrixA, float** matrixB, int rowA, int colAcolB, int rowB) {    
-    float** matrixC = new float*[rowA];
+template <typename NumType = float>
+NumType** matrixDotProductTranspose(NumType** matrixA, NumType** matrixB, int rowA, int colAcolB, int rowB) {    
+    NumType** matrixC = new NumType*[rowA];
     for(int i = 0; i < rowA; i++) {
-        matrixC[i] = new float[rowB];
+        matrixC[i] = new NumType[rowB];
         for(int k = 0; k < rowB; k++) { // k iterates over columns of matrixC and rows of matrixB
             matrixC[i][k] = 0.0f;
             for(int j = 0; j < colAcolB; j++) { // j iterates over the shared dimension
@@ -178,11 +199,11 @@ float** matrixDotProductTranspose(float** matrixA, float** matrixB, int rowA, in
 }
 
 
-
-float** diagonalize(float* vector, int components){
-    float** matrix = new float*[components];
+template <typename NumType = float>
+NumType** diagonalize(NumType* vector, int components){
+    NumType** matrix = new NumType*[components];
     for(int i = 0; i < components; i++){
-        matrix[i] = new float[components];
+        matrix[i] = new NumType[components];
         for(int j = 0; j < components; j++){
             if(i==j){
                 matrix[i][j] = vector[i];
@@ -195,10 +216,11 @@ float** diagonalize(float* vector, int components){
     return matrix;
 }
 
-float** jacobian(float* vector, int components){
-    float** matrix = new float*[components];
+template <typename NumType = float>
+NumType** jacobian(NumType* vector, int components){
+    NumType** matrix = new NumType*[components];
     for(int i = 0; i < components; i++){
-        matrix[i] = new float[components];
+        matrix[i] = new NumType[components];
         for(int j = 0; j < components; j++){
             if(i == j){
                 matrix[i][j] = vector[i] - vector[i]*vector[j];
@@ -212,25 +234,32 @@ float** jacobian(float* vector, int components){
 }
 
 // Takes vector, the saved inputs for a particular sample and that samples dvalues, creates the jacobian matrix of the vector and multiplies it by the dvalues for chain rule.
-float* dvalsXJacobian(float* vector, int components, float* dvalues) {
-    float* newvector = new float[components];
 
+template <typename NumType = float>
+NumType* dvalsXJacobian(NumType* vector, int components, NumType* dvalues) {
+    NumType* newvector = new NumType[components];
+    //NumType** jacob = new NumType*[components];
     for(int i = 0; i < components; i++) {
         newvector[i] = 0.0f;
+        //jacob[i] = new NumType[components];
         for(int j = 0; j < components; j++) {
             if (i == j) {
-                newvector[i] += (vector[i] * (1 - vector[i])) * dvalues[j];
+                //jacob[i][j] = vector[i] * (1-vector[i]);
+                newvector[i] += (vector[i] * (1-vector[i])) * dvalues[j];
             } else {
+                //jacob[i][j] = (-vector[i] * vector[j]);
+
                 newvector[i] += (-vector[i] * vector[j]) * dvalues[j];
             }
         }
     }
-    
+    //matrixViewer(jacob, 2, 2);
     return newvector;
 }
 
-float matrixAbsMean(float** matrix, int rows, int cols){
-    float sum = 0;
+template <typename NumType = float>
+NumType matrixAbsMean(NumType** matrix, int rows, int cols){
+    NumType sum = 0;
     for(int i = 0; i < rows; i++){
         for(int j = 0; j <  cols; j++){
             if(matrix[i][j] > 0){

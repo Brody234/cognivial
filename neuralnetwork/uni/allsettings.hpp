@@ -1,0 +1,5 @@
+#ifndef UNIVERSALSETTINGS_H
+#define UNIVERSALSETTINGS_H
+
+
+#endif

@@ -5,21 +5,22 @@
 
 #include "../layer/layerlite.hpp"
 
+template <typename NumType = float>
 class OptimizerRandom
 {
     private:
-        float learning_rate;
-        float best_acc;
-        float** bestweights;
-        float* bestbiases;
-        float best_loss;
+        NumType learning_rate;
+        NumType best_acc;
+        NumType** bestweights;
+        NumType* bestbiases;
+        NumType best_loss;
 
         std::random_device rd;
         std::mt19937 gen;
-        std::uniform_real_distribution<float> dis;
+        std::uniform_real_distribution<NumType> dis;
 
     public:
-        OptimizerRandom(float learning_rateVal, LayerLite* layer)
+        OptimizerRandom(NumType learning_rateVal, LayerLite<NumType>* layer)
         :
         gen(rd()),
         dis(-1.0f, 1.0f)
@@ -33,7 +34,7 @@ class OptimizerRandom
         }
         
 
-        void optimize_layer(LayerLite* layer, float acc){
+        void optimize_layer(LayerLite<NumType>* layer, NumType acc){
         if(acc < best_loss){
             //std::cout << "New best" << std::endl;
             clearMatrix(bestweights, layer->weight_size);

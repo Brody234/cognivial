@@ -5,79 +5,89 @@
 
 #include "../layer/layerlite.hpp"
 
-class OptimizerSGD
+template <typename NumType = float>
+class OptimizerSGD : public BaseOptimizer<NumType>
 {
     private:
-        float learning_rate;
+        NumType learning_rate;
         bool momentum;
-        float decay;
+        NumType decay;
         int iterations;
-        float original_learning_rate;
+        NumType original_learning_rate;
     public:
-        OptimizerSGD(float learning_rateVal, bool momentumVal){
+        OptimizerSGD(NumType learning_rateVal, bool momentumVal){
             learning_rate = learning_rateVal;
             momentum = momentumVal;
             decay = 1.0f;
             iterations = 0;
             original_learning_rate = learning_rateVal;
         }
-        OptimizerSGD(float learning_rateVal){
+        OptimizerSGD(NumType learning_rateVal){
             learning_rate = learning_rateVal;
             momentum = false;
             decay = 1.0f;
             iterations = 0;
             original_learning_rate = learning_rateVal;
         }
-        OptimizerSGD(float learning_rateVal, bool momentumVal, float decayVal){
+        OptimizerSGD(NumType learning_rateVal, bool momentumVal, NumType decayVal){
             learning_rate = learning_rateVal;
             momentum = momentumVal;
             decay = decayVal;
             iterations = 0;
             original_learning_rate = learning_rateVal;
         }
-        /*OptimizerSGD(float learning_rateVal, float decayVal){
+        /*OptimizerSGD(NumType learning_rateVal, NumType decayVal){
             learning_rate = learning_rateVal;
             momentum = false;
             decay = decayVal;
             iterations = 0;
             original_learning_rate = learning_rateVal;
         }*/
-        void preupdate(){
+        void preupdate() override{
             learning_rate = original_learning_rate*(1.0f/(1.0f + decay * iterations));
             iterations++;
         }
-        void optimize_layer(LayerLite* layer){
+        void optimize_layer(LayerLite<NumType>* layer) override{
             if(momentum){
 
             }
             else{
+                //NumType clip_value = 0.1f;
                 for(int i = 0; i < layer->weight_size; i++){
                     for(int j = 0; j < layer->weight_inner_size; j++){
-                        //std::cout << layer->dweights[i][j] << std::endl;
-                        float prevWeight = layer->weights[i][j];
-
-                        /*if((i+j) %2 == 0){
-                            layer->weights[i][j] += .001f;
-                        }
-                        if((i+j) %2 == 1){
-                            layer->weights[i][j] += -0.001f;
+                       /* if (layer->dweights[i][j] > clip_value) {
+                            layer->dweights[i][j] = clip_value;
+                        } else if (layer->dweights[i][j] < -clip_value) {
+                            layer->dweights[i][j] = -clip_value;
                         }*/
-                        //std::cout << i << " " << j << " : " << layer->dweights[i][j] << std::endl;
-                        layer->weights[i][j] += -learning_rate*layer->dweights[i][j];
-                        float percentchange = prevWeight-layer->weights[i][j];
-                        //std::cout << learning_rate*layer->dweights[i][j] << std::endl;
 
-                            //std::cout << i << j << " : " << -learning_rate*layer->dweights[i][j] << std::endl;
+                        layer->weights[i][j] += -learning_rate*layer->dweights[i][j];
                         
                     }
                 }
                 for(int i = 0; i < layer->bias_size; i++){
-                    if(i < 3){
-                        //std::cout << layer->dbiases[i] << std::endl;
-                    }
+                    /*if (layer->dbiases[i] > clip_value) {
+                        layer->dbiases[i] = clip_value;
+                    } else if (layer->dbiases[i] < -clip_value) {
+                        layer->dbiases[i] = -clip_value;
+                    }*/
                     layer->biases[i] += -learning_rate*layer->dbiases[i];
                 }
-                //learning_rate*= .98;
+            }
+        }
+        void optimize_prelu(ActivationPReLU<NumType>* prelu) override{
+            if(momentum){
+
+            }
+            else{
+                if(prelu->isArray){
+                    for(int i = 0; i < prelu->saved_prev_layer; i++){
+                        prelu->alpha[i] -= learning_rate*prelu->dalpha[i];
+                    }
+                }
+                else{
+                    prelu->alphaSingle -= learning_rate*prelu->dalphaSingle;
+                }
             }
         }
 };

@@ -2,7 +2,8 @@
 #define NETWORKUTILITY_H
 #include <cmath>
 
-float accuracy(float** softmax_output, int* correct_predictions, int samples, int output_layer){
+template <typename NumType = float>
+NumType accuracy(NumType** softmax_output, int* correct_predictions, int samples, int output_layer){
     int* predictions = new int[samples];
     int total = 0;
     for(int i = 0; i < samples; i++){
@@ -16,11 +17,12 @@ float accuracy(float** softmax_output, int* correct_predictions, int samples, in
             total++;
         }
     }
-    return float(total)/samples;
+    return NumType(total)/samples;
 
 }
 
-int* predictionIndices(float** softmax_output, int samples, int output_layer){
+template <typename NumType = float>
+int* predictionIndices(NumType** softmax_output, int samples, int output_layer){
     int* predictions = new int[samples];
     for(int i = 0; i < samples; i++){
         predictions[i] = 0;
