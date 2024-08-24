@@ -38,7 +38,7 @@ DataSetSingleClassNeurons<NumType> createLinearSamplesEven(int num_samples){
     dataset.y_values = new int[num_samples];
     int onecount = 0;
     int zerocount = 0;
-    gen.seed(42);
+    gen.seed(rd());
     for(int i = 0; i < num_samples/2; i++){
         dataset.x_values[i] = new NumType[2];
         dataset.x_values[i][0] = rand(gen);
@@ -125,5 +125,46 @@ DataSetNoClassNeurons<NumType> createLinearSamplesEvenYTrue2xS(int num_samples){
     }
     return dataset;
 }
+
+template <typename NumType = float>
+DataSetNoClassNeurons<NumType> createXTimesYSet(int num_samples){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<NumType> rand(-1.0f, 1.0f);
+    DataSetNoClassNeurons<NumType> dataset;
+    dataset.x_values = new NumType*[num_samples];
+    dataset.y_values = new NumType*[num_samples];
+
+    for(int i = 0; i < num_samples; i++){
+        dataset.x_values[i] = new NumType[2];
+        dataset.y_values[i] = new NumType[1];
+        dataset.x_values[i][0] = rand(gen);
+        dataset.x_values[i][1] = rand(gen);
+        dataset.y_values[i][0] = dataset.x_values[i][0]*dataset.x_values[i][1];
+    }
+
+    return dataset;
+}
+
+template <typename NumType = float>
+DataSetNoClassNeurons<NumType> createXTimesYSetWide(int num_samples){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<NumType> rand(-3.0f, 3.0f);
+    DataSetNoClassNeurons<NumType> dataset;
+    dataset.x_values = new NumType*[num_samples];
+    dataset.y_values = new NumType*[num_samples];
+
+    for(int i = 0; i < num_samples; i++){
+        dataset.x_values[i] = new NumType[2];
+        dataset.y_values[i] = new NumType[1];
+        dataset.x_values[i][0] = rand(gen);
+        dataset.x_values[i][1] = rand(gen);
+        dataset.y_values[i][0] = dataset.x_values[i][0]*dataset.x_values[i][1];
+    }
+
+    return dataset;
+}
+
 
 #endif
