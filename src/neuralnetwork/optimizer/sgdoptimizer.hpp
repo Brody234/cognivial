@@ -49,7 +49,7 @@ class OptimizerSGD : public BaseOptimizer<NumType>
         }
         void optimize_layer(LayerLite<NumType>* layer) override{
             if(momentum){
-
+                
             }
             else{
                 //NumType clip_value = 0.1f;

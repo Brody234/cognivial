@@ -41,7 +41,7 @@ class NetManager{
             else if(style == "Small Classification"){
                 addLayerToEnd(4);
                 addLeakyReLU(.01);
-                addLayerToEnd(4);
+                addLayerToEnd(1);
                 addSoftmax();
                 loss = new LossCCE<NumType>();
                 regress = false;
@@ -78,6 +78,16 @@ class NetManager{
             loss = new LossMSE<NumType>();
             regress = true;
         }
+
+        // Sets the managers loss function to be MAE and enables regression methods. This will also disable classification.
+        void setLossMAE(){
+            if(loss != nullptr){
+                delete loss;
+            }
+            loss = new LossMSE<NumType>();
+            regress = true;
+        }
+
 
     //Activation Section
 

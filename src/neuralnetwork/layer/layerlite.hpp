@@ -15,6 +15,7 @@ class LayerLite
     private:
         NumType** input_save;
         int saved_samples;
+        bool momentum;
         std::random_device rd;
         std::mt19937 gen;
         std::uniform_real_distribution<NumType> dis;
@@ -34,7 +35,7 @@ class LayerLite
         int weight_size;
         int weight_inner_size;
 
-        LayerLite(int prev_layer, int this_layer)
+        LayerLite(int prev_layer, int this_layer, bool momentumVal)
         : 
         dis(-sqrt(6.0f/(prev_layer+this_layer)), sqrt(6.0f/(prev_layer+this_layer)))
         {
@@ -53,6 +54,7 @@ class LayerLite
                     weights[i][j]= 0.5f*dis(gen);
                 }
             }
+            momentum = momentumVal;
         }
         NumType** forwardTest(NumType** input, int samples){
             saved_samples = samples;
