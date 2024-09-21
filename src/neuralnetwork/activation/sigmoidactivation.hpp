@@ -38,6 +38,9 @@ class ActivationSigmoid : public BaseActivation<NumType>
             }
             return this->dinputs;
         }
+        void print() override{
+            std::cout << " Sigmoid " << std::endl;
+        }
 };
 
 #endif

@@ -4,7 +4,7 @@
   "description": "A library for training and exporting neural networks.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node-gyp configure build"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/Brody234/cognivial/issues"
   },
-  "homepage": "https://github.com/Brody234/cognivial#readme"
+  "homepage": "https://github.com/Brody234/cognivial#readme",
+  "dependencies": {
+    "node-addon-api": "^8.1.0",
+    "v8": "^0.1.0"
+  }
 }

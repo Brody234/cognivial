@@ -55,6 +55,10 @@ class ActivationLinear : public BaseActivation<NumType>
             }
             return this->dinputs;
         }
+        void print() override{
+            std::cout << " Linear " << std::endl;
+        }
+
 };
 
 #endif

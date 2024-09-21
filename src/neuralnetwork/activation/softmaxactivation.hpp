@@ -55,6 +55,9 @@ class ActivationSoftMax : public BaseActivation<NumType>
             //matrixViewer(dinputs, samples, 2);
             return this->dinputs;
         }
+        void print() override{
+            std::cout << " Softmax " << std::endl;
+        }
 };
 
 #endif

@@ -59,6 +59,9 @@ class ActivationReLU : public BaseActivation<NumType>
             }
             return this->dinputs;
         }
+        void print() override{
+            std::cout << " ReLU " << std::endl;
+        }
 };
 
 #endif

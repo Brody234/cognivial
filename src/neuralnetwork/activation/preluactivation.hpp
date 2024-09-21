@@ -127,6 +127,9 @@ class ActivationPReLU : public BaseActivation<NumType>
             }
             return this->dinputs;
         }
+        void print() override{
+            std::cout << " PReLU" << std::endl;
+        }
 };
 
 

@@ -64,6 +64,9 @@ class ActivationStep : public BaseActivation<NumType>
             }
             return this->dinputs;
         }
+        void print() override{
+            std::cout << " Step " << std::endl;
+        }
 };
 
 #endif

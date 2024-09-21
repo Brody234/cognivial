@@ -13,6 +13,8 @@ public:
     virtual NumType** forwardTest(NumType** inputs, int samples, int prev_layer) = 0;
 
     virtual NumType** backward(NumType** dvalues) = 0;
+    
+    virtual void print() = 0;
 };
 
 #endif

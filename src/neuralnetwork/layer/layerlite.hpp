@@ -125,6 +125,15 @@ class LayerLite
         NumType* get_biases(){
             return copyVector(biases, bias_size);
         }
+        void print(){
+            std::cout << "Layer "<< weight_inner_size << " neurons and " << weight_size << " previous layer neurons" << std::endl;
+        }
+        int getPrevLayer(){
+            return weight_size;
+        }
+        int getNeurons(){
+            return weight_inner_size;
+        }
 };
 
 #endif

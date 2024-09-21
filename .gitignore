@@ -8,4 +8,6 @@ src/neuralnetwork/tutorial
 src/neuralnetwork/tutorial.dSYM/
 src/neuralnetwork/oldtests.txt
 src/neuralnetwork/wrongcce.txt
-.vscode/
+/.vscode/
+/node_modules/
+/build

@@ -1,4 +1,26 @@
+#include <napi.h>
+#include <iostream>
+
+Napi::Number Add(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    std::cout << "Inside Add function" << std::endl;
+
+    int result = 1 + 1;
+    return Napi::Number::New(env, result);
+}
+
+Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    exports.Set("add", Napi::Function::New(env, Add));
+    return exports;
+}
+
+NODE_API_MODULE(cogninet, Init)
+
+
+
 //Activations
+#include <iostream>
+
 #include "../src/neuralnetwork/activation/baseactivation.hpp"
 #include "../src/neuralnetwork/activation/leakyreluactivation.hpp"
 #include "../src/neuralnetwork/activation/linearactivation.hpp"
@@ -38,3 +60,4 @@
 #include "../src/neuralnetwork/utilities/networkutility.hpp"
 #include "../src/neuralnetwork/utilities/vectorutility.hpp"
 
+// Simple function that adds 1 + 1
