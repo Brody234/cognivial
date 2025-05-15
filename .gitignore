@@ -13,3 +13,5 @@ src/neuralnetwork/wrongcce.txt
 /build
 src/.vscode/ 
 .vscode/
+/nodejs/build/
+/nodejs/node_modules/
