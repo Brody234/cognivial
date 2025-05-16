@@ -58,7 +58,6 @@ class LayerLite
         }
         NumType** forwardTest(NumType** input, int samples){
             saved_samples = samples;
-            //print_weights();
             outputs = new NumType*[samples];
             input_save = new NumType*[samples];
             for(int k = 0; k < samples; k++){
@@ -69,7 +68,6 @@ class LayerLite
                     outputs[k][i] = 0.0f;
                     for(int j = 0; j < weight_size; j++){
                         outputs[k][i] += input[k][j] * weights[j][i];
-                        //std::cout << input[k][j] << std::endl;
                         input_save[k][j] = input[k][j];
                     }
                     outputs[k][i] += biases[i];
@@ -79,7 +77,7 @@ class LayerLite
         }
         NumType** backward(NumType** dvalues){
             if (dbiases != nullptr && dbiases != NULL) {
-                delete [] dbiases;  // Free previously allocated dweights
+                delete [] dbiases; 
                 dbiases = nullptr;
             }
 

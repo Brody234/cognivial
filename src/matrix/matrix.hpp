@@ -1,6 +1,3 @@
-#ifndef MATRIX
-#define MATRIX
+#pragma once
 
-
-
-#endif
+#include "structures/2d.hpp"
