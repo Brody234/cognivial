@@ -16,6 +16,9 @@ src/neuralnetwork/tutorial.dSYM/
 src/neuralnetwork/oldtests.txt
 src/neuralnetwork/wrongcce.txt
 
+#Decision Tree Stuff
+src/decisiontree/testcode.cpp
+
 #Node Stuff
 /.vscode/
 /node_modules/

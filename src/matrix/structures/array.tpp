@@ -98,11 +98,11 @@ std::string Array<ArrType, dims>::toString() const{
         + (*this)[(shape[0]-1)].toString()+ "\n]";
     }
     else{
-        std::string str = "[\n ";
+        std::string str = "[\n";
         for(size_t i = 0; i < shape[0]; i++){
-            str += (*this)[i].toString() + "\n ";
+            str += " " + (*this)[i].toString() + "\n";
         }
-        str += "\n]";
+        str += "]";
         return str;
     }
 }
