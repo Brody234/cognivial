@@ -1,3 +1,3 @@
 #pragma once
 
-#include "structures/2d.hpp"
+#include "structures/array.hpp"

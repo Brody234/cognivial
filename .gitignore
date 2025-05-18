@@ -2,6 +2,7 @@
 src/matrix/testcode.cpp
 src/matrix/testcode
 src/matrix/testcode.dSYM
+src/matrix/Makefile
 
 #Neural Network Stuff
 src/neuralnetwork/.vscode/
