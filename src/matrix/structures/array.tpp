@@ -304,6 +304,11 @@ void Array<ArrType, dims>::scalarAddTurbo(ArrType num, size_t total){
     return;
 }
 
+// Returns an array of the same shape but zeroed out
+template <typename ArrType, size_t dims>
+Array<ArrType, dims> Array<ArrType, dims>::zeros(){
+    return Array<ArrType, dims>(shape);
+}
 
 // Dimension 1
 
@@ -313,7 +318,7 @@ Array<ArrType, 1>::Array(const std::size_t* s){
     owns = true;
     len = s[0];
     stride = 1;
-    data = new ArrType[len];
+    data = new ArrType[len]();
 }
 
 // public constructor, uses a scalar for length.
@@ -322,7 +327,7 @@ Array<ArrType, 1>::Array(const std::size_t s){
     owns = true;
     len = s;
     stride = 1;
-    data = new ArrType[len];
+    data = new ArrType[len]();
 }
 
 
@@ -393,6 +398,7 @@ Array<ArrType, 1> Array<ArrType, 1>::copy() {
     return arr;
 }
 
+// scales the vector.
 template<typename ArrType>
 void Array<ArrType, 1>::operator*=(ArrType num){
     for(size_t i = 0; i < len; i++){
@@ -401,6 +407,7 @@ void Array<ArrType, 1>::operator*=(ArrType num){
     return;
 }
 
+// adds a scalar to the vector
 template<typename ArrType>
 void Array<ArrType, 1>::operator+=(ArrType num){
     for(size_t i = 0; i < len; i++){
@@ -409,4 +416,9 @@ void Array<ArrType, 1>::operator+=(ArrType num){
     return;
 }
 
+// returns an array of the same shape but zeroed out
+template <typename ArrType>
+Array<ArrType, 1> Array<ArrType, 1>::zeros(){
+    return Array<ArrType, 1>(len);
+}
 #endif 

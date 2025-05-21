@@ -123,6 +123,12 @@ class Array {
          * Be careful if you use it.
          */
         void scalarAddTurbo(ArrType num, size_t total);
+
+        /*
+         * Returns a new array that has zeros in all positions and the same shape.
+         * O(n) space and time.
+         */
+        Array<ArrType, dims> zeros();
 };
 
 /*
@@ -215,6 +221,12 @@ class Array<ArrType, 1> {
          * Adds a scalar to every index of a 1D array.
          */
         void operator+=(ArrType num);
+
+        /*
+         * Returns a new array that has zeros in all positions and the same shape.
+         * O(n) space and time.
+         */
+        Array<ArrType, 1> zeros();
 };
 
 // The file I actually implemented this stuff in.
