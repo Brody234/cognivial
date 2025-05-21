@@ -22,12 +22,13 @@ class Array {
         ArrType* data;
         // Distance between subarrays/length of subarrays, first index this level, following indices as follows.
         std::size_t* stride;
-        // Shape of the array. First index is highest dimension.
-        std::size_t* shape;
+
         // Boolean to track parent array to prevent use after free bugs.
         bool owns;
 
     public:
+        // Shape of the array. First index is highest dimension.
+        std::size_t* shape;
     // Essential functions for basic array functionality
 
         // For users to create a new array.
@@ -129,6 +130,18 @@ class Array {
          * O(n) space and time.
          */
         Array<ArrType, dims> zeros();
+
+        /*
+         * Dot Product
+         */
+        Array<ArrType, dims> operator*(const Array<ArrType, dims>& B) const;
+
+        /*
+         * Vector Dot Product
+         * Returns a scalar, not a vector
+         */
+        Array<ArrType, dims> operator*(const Array<ArrType, 1>& vector) const;
+
 };
 
 /*
@@ -147,13 +160,13 @@ class Array<ArrType, 1> {
     private:
         // The first index of the data.
         ArrType* data;
-        // Number of datapoints in this array/subarray.
-        std::size_t len;
         // Distance between datapoints, only used when this is a subarray.
         std::size_t stride;
         // Boolean to know if this should be freeing memory.
         bool owns;
     public:
+        // Number of datapoints in this array/subarray.
+        std::size_t len;
     // Essential to array functionality.
         // Creates the array using a 1D array.
         Array(const std::size_t* s);
@@ -227,6 +240,13 @@ class Array<ArrType, 1> {
          * O(n) space and time.
          */
         Array<ArrType, 1> zeros();
+
+        /*
+         * Vector Dot Product
+         * Returns a scalar, not a vector
+         */
+        ArrType operator*(const Array<ArrType, 1>& B) const;
+
 };
 
 // The file I actually implemented this stuff in.

@@ -310,6 +310,47 @@ Array<ArrType, dims> Array<ArrType, dims>::zeros(){
     return Array<ArrType, dims>(shape);
 }
 
+
+//The following two functions are poorly implemented and need to be seriously reworked for large scale use cases, but I wanted to get them working so I could rebuild /neuralnetwork on them, then rework them
+// Dot product of 2 2D Matrices
+template <typename ArrType, size_t dims>
+Array<ArrType, dims> Array<ArrType, dims>::operator*(const Array<ArrType, dims>& B) const{
+    if(dims != 2){
+        throw std::length_error("Shape Error: Matrix must be 2D");
+    }
+    if(shape[1]!= B.shape[0]){
+        throw std::length_error("Shape Error: Columns and rows are different shapes");
+    }
+    size_t newShape[2] = { shape[0], B.shape[1] };
+    Array<ArrType, 2> C(newShape);
+    auto BColMajor = B.transpose();
+    for(size_t i = 0; i < B.shape[1]; i++){
+        auto col = (*this)*BColMajor[i];
+        std::cout << col.toString() << std::endl;
+        for(size_t j = 0; j < shape[0]; j++){
+            C[j][i] = col[j][0];
+        }
+    }
+    return C;
+}
+
+// Dot product nxm matrix dot (m length vector)^T, vector treated as a column, returns nx1 matrix
+template <typename ArrType, size_t dims>
+Array<ArrType, dims> Array<ArrType, dims>::operator*(const Array<ArrType, 1>& vector) const{
+    if(dims != 2){
+        throw std::length_error("Shape Error: Matrix must be 2D");
+    }
+    if(shape[1] != vector.len){
+        throw std::length_error("Shape Error: Vector length must be length of rows in matrix");
+    }
+    size_t newShape[2] = { shape[0], 1 };
+    Array<ArrType, dims> col(newShape);
+    for(size_t i = 0; i < shape[0]; i++){
+        std::cout << i << std::endl;
+        col[i][0] = (*this)[i]*vector;
+    }
+    return col;
+}
 // Dimension 1
 
 // public constructor, uses an array for length, supposed to be length one but technically doesn't matter, len is first index.
@@ -421,4 +462,26 @@ template <typename ArrType>
 Array<ArrType, 1> Array<ArrType, 1>::zeros(){
     return Array<ArrType, 1>(len);
 }
+
+// dot product of vectors, A dot B^T
+template <typename ArrType>
+ArrType Array<ArrType, 1>::operator*(const Array<ArrType, 1>& B) const{
+    if(len != B.len){
+        throw std::length_error("Shape Error: Vectors have different lengths.");
+    }
+    size_t i = 0;
+    size_t m = int(len/4) *4;
+    ArrType acc = 0;
+    for(; i < m; i+=4){
+        // This is basically just politely asking the compiler to use mmx registers on 8 byte doubles.
+        // I will drop a GPU and MMX update one day.
+        acc += (*this)[i] * B[i] + (*this)[i+1]*B[i+1] + (*this)[i+2] * B[i+2] + (*this)[i+3]*B[i+3];
+    }
+    for(; i < len; i++){
+        acc += (*this)[i] * B[i];
+    }
+    return acc;
+}
+
+
 #endif 
