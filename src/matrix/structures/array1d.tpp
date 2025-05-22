@@ -14,8 +14,8 @@ using std::size_t;
 
 // empty constructor
 template <typename ArrType>
-Array<ArrType, 1>::Array(const std::size_t* s)
-: data(nullptr), stride(0), shape(0) {
+Array<ArrType, 1>::Array()
+: data(nullptr), stride(0), len(0) {
 
 }
 
@@ -97,8 +97,8 @@ Array<ArrType, 2> Array<ArrType, 1>::transpose() const{
 
 // copies the data into a new block of memory
 template<typename ArrType>
-Array<ArrType, 1> Array<ArrType, 1>::copy() {
-    Array<ArrType, 1> arr = new Array<ArrType, 1>(len);
+Array<ArrType, 1> Array<ArrType, 1>::copy() const{
+    Array<ArrType, 1> arr = Array<ArrType, 1>(len);
     for(std::size_t i = 0; i < len; i++){
         arr[i] = (*this)[i]; // this pointer to access the correct datapoint regardless of stride values.
     }
@@ -149,5 +149,28 @@ ArrType Array<ArrType, 1>::operator*(const Array<ArrType, 1>& B) const{
     return acc;
 }
 
+template <typename ArrType>
+Array<ArrType, 1> Array<ArrType, 1>::operator<=(const Array<ArrType, 1>& vector){
+    if(vector.len != len){
+        std::length_error("Shape Error: Vectors must have equal length");
+    }
+    for(size_t i = 0; i < len; i++){
+        (*this)[i] = vector[i];
+    }
+    return *this;
+}
+
+
+template <typename ArrType>
+Array<ArrType, 1> Array<ArrType, 1>::operator=(const Array<ArrType, 1>& vector){
+    if(owns){
+        delete[] data;
+    }
+    auto const copiedVector = vector.copy();
+    data = copiedVector.data;
+    len = copiedVector.len;
+    stride = copiedVector.stride;
+    return *this;
+}
 
 #endif 

@@ -4,16 +4,16 @@
 #include <iostream>
 
 template <typename NumType = float>
-NumType vectorSum(NumType* vector, int components){
+NumType vectorSum(Array<NumType, 1> vector, size_t components){
     NumType sum = 0.0f;
-    for(int i = 0; i < components; i++){
+    for(size_t i = 0; i < components; i++){
         sum += vector[i];
     }
     return sum;
 }
 
 template <typename NumType = float>
-NumType vectorMean(NumType* vector, int components){
+NumType vectorMean(Array<NumType, 1> vector, size_t components){
     return vectorSum(vector, components)/components;
 }
 
@@ -43,18 +43,15 @@ NumType* vectorLog(NumType* vector, int components){
 
 // Creates an identical matrix with copied values on a different address.
 template <typename NumType = float>
-NumType* copyVector(NumType* vector, int components){
-    NumType* copied = new NumType[components];
-    for(int i = 0; i < components; i++){
-        copied[i] = vector[i];
-    }
+Array<NumType, 1> copyVector(Array<NumType, 1> vector, size_t components){
+    Array<NumType, 1> copied = vector.copy();
     return copied;
 }
 
 template <typename NumType = float>
-NumType* vectorLogNeg(NumType* vector, int components){
-    NumType* newVect = copyVector(vector, components);
-    for(int i = 0; i < components; i++){
+Array<NumType, 1> vectorLogNeg(Array<NumType, 1> vector, size_t components){
+    Array<NumType, 1> newVect = copyVector(vector, components);
+    for(size_t i = 0; i < components; i++){
         //std::cout << vector[i] << std::endl;
         newVect[i] = -log(vector[i]);
         //std::cout << vector[i] << std::endl;

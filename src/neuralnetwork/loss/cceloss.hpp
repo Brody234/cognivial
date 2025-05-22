@@ -11,53 +11,52 @@ template <typename NumType = float>
 class LossCCE : public BaseLoss<NumType>
 {
     private:
-        NumType* vector;
-        int vector_size = 0;
-        int saved_samples;
+        Array<NumType, 1> vector;
+        size_t vector_size = 0;
+        size_t saved_samples;
 
     public:
         ~LossCCE() {
-            if (vector != nullptr) {
+            /*if (vector != nullptr) {
                 delete[] vector;
                 vector = nullptr;  // Prevents double free
-            }
+            }*/
         }
 
         
-        NumType forwardClass(NumType** outputMatrix, int samples, int output_neurons, int* actualMatrix) override{
+        NumType forwardClass(Array<NumType, 2> outputMatrix, size_t samples, size_t output_neurons, Array<int, 1> actualMatrix) override{
             saved_samples = samples;
 
-            NumType** copiedMatrix = copyMatrix<NumType>(outputMatrix, samples, output_neurons);
+            Array<NumType, 2> copiedMatrix = outputMatrix.copy(); //copyMatrix<NumType>(outputMatrix, samples, output_neurons);
             copiedMatrix = matrixClip<NumType>(copiedMatrix, samples, output_neurons, 1, 0);
 
-            NumType* totals = new NumType[samples];
-            for(int i = 0; i < samples; i++){
+            Array<NumType, 1> totals(samples);
+            for(size_t i = 0; i < samples; i++){
                 totals[i] = copiedMatrix[i][actualMatrix[i]];
             }
-            delete[] vector;
+            //delete[] vector;
             vector = vectorLogNeg(totals, samples);
             NumType mean = vectorMean(vector, samples);
 
             clearMatrix(copiedMatrix, samples);
-            delete[] totals;
+            //delete[] totals;
 
             return mean;
         }
 
         // Each Output Neuron Identifies Classes
-        NumType forwardClass(NumType** outputMatrix, int samples, int output_neurons, int** actualMatrix) override {
+        NumType forwardClass(Array<NumType, 2> outputMatrix, size_t samples, size_t output_neurons, Array<int, 2> actualMatrix) override {
             saved_samples = samples;
-            NumType** copiedMatrix = copyMatrix<NumType>(outputMatrix, samples, output_neurons);
+            Array<NumType, 2> copiedMatrix = copyMatrix<NumType>(outputMatrix, samples, output_neurons);
 
-            for(int i = 0; i < samples; i++){
-                for(int j = 0; j < output_neurons; j++){
+            for(size_t i = 0; i < samples; i++){
+                for(size_t j = 0; j < output_neurons; j++){
                     copiedMatrix[i][j] *= actualMatrix[i][j];
                 }
             }
 
             matrixClip<NumType>(copiedMatrix, samples, output_neurons, 1, 0);
 
-            delete[] vector;
             vector = matrixLogNegVectorSum(copiedMatrix, samples, output_neurons);
 
             NumType mean = vectorMean(vector, samples);
@@ -66,17 +65,17 @@ class LossCCE : public BaseLoss<NumType>
             return mean;
         }
 
-        NumType** backwardClass(int output_neurons, int* y_true, NumType** softouts) override{
-            if(this->dvalues != nullptr){
+        Array<NumType, 2> backwardClass(size_t output_neurons, Array<int, 1> y_true, Array<NumType, 2> softouts) override{
+            /*if(this->dvalues != nullptr){
                 clearMatrix(this->dvalues, saved_samples);
                 this->dvalues = nullptr;
-            }
-            this->dvalues = new NumType*[saved_samples];
+            }*/
+            size_t shape[2] = {saved_samples, output_neurons};
+            this->dvalues = Array<NumType, 2>(shape);
 
-            for (int i = 0; i < saved_samples; i++) {
-                this->dvalues[i] = new NumType[output_neurons];
+            for (size_t i = 0; i < saved_samples; i++) {
 
-                for (int j = 0; j < output_neurons; j++) {
+                for (size_t j = 0; j < output_neurons; j++) {
                     NumType r = softouts[i][j];
                     this->dvalues[i][j] = softouts[i][j];
 
@@ -93,12 +92,12 @@ class LossCCE : public BaseLoss<NumType>
 
         // Just to keep this from being abstract/let managers easily switch from regression to classification without an object. Never called in manager and will break your code if you call directly.
 
-        NumType forwardRegress(NumType** outputMatrix, int samples, int output_neurons, NumType** actualMatrix) override{
+        NumType forwardRegress(Array<NumType, 2> outputMatrix, size_t samples, size_t output_neurons, Array<NumType, 2> actualMatrix) override{
             return 0.0;
         }
 
-        NumType** backwardRegress(NumType** y_pred, NumType** y_true) override{
-            return new NumType*[0];
+        Array<NumType, 2> backwardRegress(Array<NumType, 2> y_pred, Array<NumType, 2> y_true) override{
+            return Array<NumType, 2>();
         }
 
 

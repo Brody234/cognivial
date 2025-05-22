@@ -165,7 +165,7 @@ Array<ArrType, dims> Array<ArrType, dims>::transpose() const{
 
 // copies the array into a new block of memory
 template <typename ArrType, std::size_t dims>
-Array<ArrType, dims> Array<ArrType, dims>::copy(){
+Array<ArrType, dims> Array<ArrType, dims>::copy() const{
     // This section is an O(dims) time portion that checks if the Array was unchanged/shape is default.
     // If the array is unchanged, time complexity goes from O(dims*total) to O(total).
     size_t total = 1;
@@ -205,7 +205,7 @@ Array<ArrType, dims> Array<ArrType, dims>::copy(){
 
 // copies data, shape and strides directly, with 0 checks for any edge cases.
 template <typename ArrType, size_t dims>
-Array<ArrType, dims> Array<ArrType, dims>::copyTurbo(std::size_t total){
+Array<ArrType, dims> Array<ArrType, dims>::copyTurbo(std::size_t total) const{
     ArrType* newData = new ArrType[total];
     for(std::size_t i = 0; i < total; i++){
         newData[i] = data[i]; 
@@ -357,6 +357,54 @@ Array<ArrType, dims> Array<ArrType, dims>::operator*(const Array<ArrType, 1>& ve
         col[i][0] = (*this)[i]*vector;
     }
     return col;
+}
+
+template <typename ArrType, size_t dims>
+Array<ArrType, dims> Array<ArrType, dims>::operator=(const Array<ArrType, dims> matrix){
+    if(owns){
+        delete [] data;
+        delete [] stride;
+        delete [] shape;
+    }
+    auto const copiedMatrix = matrix.copy();
+    size_t total = 1;
+    size_t* newStrides = new size_t[dims];
+    size_t* newShape =  new size_t[dims];
+    newStrides[dims-1] = 1;
+    for(size_t i = 0; i < dims; i++){
+        total *= copiedMatrix.shape[i];
+    }
+    bool unchanged = true;
+    // i is a long here because size_t is unsigned so decrementing it results in an underflow (it's always geq 0).
+    for(long i = dims-2; i >= 0; i--){
+        newStrides[i] = shape[i+1]*newStrides[i+1];
+        if(stride[i] != shape[i+1]*stride[i+1]){
+            unchanged = false;
+        }
+    }
+    //uncomment to turbo charge
+    /*if(stride[dims-1] == 1 && unchanged){
+        // This is the function call that optimizes copying arrays whose strides are default.
+        return copyTurbo(total);
+    }*/
+
+    ArrType* newData = new ArrType[total];
+    for(size_t i = 0; i < total; i++){
+        size_t* idx = new size_t[dims];
+        size_t newI = i;
+        size_t loc = 0;
+        for (int k = dims - 1; k >= 0; --k) {
+            loc   += stride[k] * (newI % shape[k]);
+            newI  /= shape[k];
+        }
+
+        newData[i] = matrix.data[loc];
+    }
+    data = newData;
+    owns = true;
+    shape = newShape;
+    stride = newStrides;
+    return (*this);
 }
 #include "array1d.tpp"
 

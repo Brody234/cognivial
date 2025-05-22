@@ -23,10 +23,11 @@ class Array {
         // Distance between subarrays/length of subarrays, first index this level, following indices as follows.
         std::size_t* stride;
 
+    public:
+
         // Boolean to track parent array to prevent use after free bugs.
         bool owns;
 
-    public:
         // Shape of the array. First index is highest dimension.
         std::size_t* shape;
     // Essential functions for basic array functionality
@@ -87,7 +88,7 @@ class Array {
          * WARNING: See the 1D array's copy function for full warning.
          * The full time complexity of this function is O(n*dims), to handle strides.
          */
-        Array<ArrType, dims> copy();
+        Array<ArrType, dims> copy() const;
 
         /*
          * WARNING DO NOT USE THIS UNLESS YOU ARE VERY CONFIDENT, THIS FUNCTION IS BASICALLY A BUG.
@@ -97,7 +98,7 @@ class Array {
          * copy() will automatically check this and call copyTurbo directly, so there really isn't any reason for you to use it. 
          * But if you really want it, here it is. Don't blame me when it creates vulnerabilities in your code.
          */
-        Array<ArrType, dims> copyTurbo(std::size_t total);
+        Array<ArrType, dims> copyTurbo(std::size_t total) const;
         /*
          * Scalar multiplication. 
          * Very simple concept, for each value in the array, multiply it by a scalar.
@@ -139,11 +140,16 @@ class Array {
         Array<ArrType, dims> operator*(const Array<ArrType, dims>& B) const;
 
         /*
-         * Vector Dot Product
-         * Returns a scalar, not a vector
+         * Matrix Vector Dot Product
+         * Returns a vector
          */
         Array<ArrType, dims> operator*(const Array<ArrType, 1>& vector) const;
 
+        /*
+         * Gives a matrix values of another matrix and transfers ownership
+         * Becareful to not create a use after free with ownership transfer
+         */
+        Array<ArrType, dims> operator=(const Array<ArrType, dims> matrix);
 };
 
 /*
@@ -164,9 +170,10 @@ class Array<ArrType, 1> {
         ArrType* data;
         // Distance between datapoints, only used when this is a subarray.
         std::size_t stride;
+    public:
         // Boolean to know if this should be freeing memory.
         bool owns;
-    public:
+
         // Number of datapoints in this array/subarray.
         std::size_t len;
     // Essential to array functionality.
@@ -226,7 +233,7 @@ class Array<ArrType, 1> {
          * That means removing half your copy statements will make your code run twice as fast. 
          * On small datasets, knock yourself out I guess. 
          */
-        Array<ArrType, 1> copy();
+        Array<ArrType, 1> copy() const;
 
         /*
          * Scalar multiplies a 1D array by a scalar.
@@ -251,6 +258,16 @@ class Array<ArrType, 1> {
          * Returns a scalar, not a vector
          */
         ArrType operator*(const Array<ArrType, 1>& B) const;
+
+        /*
+         * Copies another array's data into an array
+         */
+        Array<ArrType, 1> operator<=(const Array<ArrType, 1>& vector);
+
+        /*
+         * Assigns an array to a new array, transfers ownership of data
+         */
+        Array<ArrType, 1> operator=(const Array<ArrType, 1>& vector);
 
 };
 

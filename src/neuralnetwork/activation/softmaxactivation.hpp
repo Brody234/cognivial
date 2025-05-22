@@ -8,23 +8,23 @@ template <typename NumType = float>
 class ActivationSoftMax : public BaseActivation<NumType>
 {
     private:
-        int saved_samples;
-        int saved_prev_layer;
+        size_t saved_samples;
+        size_t saved_prev_layer;
     public:
-        NumType** forward(NumType** inputs, int samples, int prev_layer) override{
+        Array<NumType, 2> forward(Array<NumType, 2> inputs, size_t samples, size_t prev_layer) override{
             //matrixViewer(inputs, samples, prev_layer);
             saved_samples = samples;
             saved_prev_layer = prev_layer;
             if(samples <= 0){
-                return new NumType*[0];
+                return Array<NumType, 2>();
             }
-            if(this->outputs != nullptr){
+            /*if(this->outputs != nullptr){
                 clearMatrix(this->outputs, samples);
                 this->outputs = nullptr;
-            }
-            this->outputs = new NumType*[samples];
+            }*/
+            size_t outputsShape[2] = {samples, prev_layer};
+            this->outputs = Array<NumType, 2>(outputsShape);
             for(int i = 0; i < samples; i++){
-                this->outputs[i] = new NumType[prev_layer];
                 NumType sum = 0.0f;
                 NumType max = inputs[i][0];
                 for(int j = 1; j < prev_layer; j++){
@@ -45,10 +45,11 @@ class ActivationSoftMax : public BaseActivation<NumType>
             }
             return this->outputs;
         }
-        NumType** backward(NumType** dvalues) override{
-            this->dinputs = new NumType*[saved_samples];
+        Array<NumType, 2> backward(Array<NumType, 2> dvalues) override{
+            size_t dinputsShape[2] = {saved_samples, saved_prev_layer};
+            this->dinputs = Array<NumType, 2>(dinputsShape);
             for(int i = 0; i < saved_samples; i++){
-                this->dinputs[i] = dvalsXJacobian(this->outputs[i], saved_prev_layer, dvalues[i]); 
+                this->dinputs[i] <= dvalsXJacobian(this->outputs[i], saved_prev_layer, dvalues[i]); 
                 //std::cout << "DINPUT OF SOFTMAX" << std::endl;
                 //std::cout << dinputs[i][0] << std::endl;
             }

@@ -7,30 +7,14 @@
 
 // Deletes a matrix from memory.
 template <typename NumType = float>
-void clearMatrix(NumType** matrix, int row){
-    if (matrix != nullptr) {
-        for(int i = 0; i < row; i++) {
-            if (matrix[i] != nullptr) {
-                delete[] matrix[i];
-                matrix[i] = nullptr;
-            }
-        }
-        delete[] matrix;
-        matrix = nullptr;
-    }
+void clearMatrix(Array<NumType, 2> matrix, int row){
+    return;
 }
 
 // Creates an identical matrix with copied values on a different address.
 template <typename NumType = float>
-NumType** copyMatrix(NumType** matrix, int row, int col){
-    NumType** copied = new NumType*[row];
-    for(int i = 0; i < row; i++){
-        copied[i] = new NumType[col];
-        for(int j = 0; j < col; j++){
-            copied[i][j] = matrix[i][j];
-        }
-    }
-    return copied;
+Array<NumType, 2> copyMatrix(Array<NumType, 2> matrix, int row, int col){
+    return matrix.copy();
 }
 
 // Calculates the sum of elements in a matrix.
@@ -54,7 +38,7 @@ NumType matrixMean(NumType** matrix, int row, int col){
 
 // Takes every value in a matrix and clips it between maxClip - e^-50 and minClip + e^-50.
 template <typename NumType = float>
-NumType** matrixClip(NumType** matrix, int row, int col, NumType maxClip, NumType minClip){
+Array<NumType, 2> matrixClip(Array<NumType, 2> matrix, int row, int col, NumType maxClip, NumType minClip){
     NumType clipper = 1e-7;
     maxClip -= clipper;
     minClip += clipper;
@@ -95,8 +79,8 @@ NumType** matrixLogNeg(NumType** matrix, int row, int col){
 
 // Returns a vector of length rows, each component is the inverse log of it's respective row.
 template <typename NumType = float>
-NumType* matrixLogNegVectorSum(NumType** matrix, int row, int col){
-    NumType* vectorSum = new NumType[row];
+Array<NumType, 1> matrixLogNegVectorSum(Array<NumType, 2> matrix, int row, int col){
+    Array<NumType, 1> vectorSum(row);
     //std::cout << "row " << row << " col " << col << std::endl;
     for(int i = 0; i < row; i++){
         vectorSum[i] = 0.0f;
@@ -236,8 +220,8 @@ NumType** jacobian(NumType* vector, int components){
 // Takes vector, the saved inputs for a particular sample and that samples dvalues, creates the jacobian matrix of the vector and multiplies it by the dvalues for chain rule.
 
 template <typename NumType = float>
-NumType* dvalsXJacobian(NumType* vector, int components, NumType* dvalues) {
-    NumType* newvector = new NumType[components];
+Array<NumType, 1> dvalsXJacobian(Array<NumType, 1> vector, int components, Array<NumType, 1> dvalues) {
+    Array<NumType, 1> newvector(components);
     //NumType** jacob = new NumType*[components];
     for(int i = 0; i < components; i++) {
         newvector[i] = 0.0f;

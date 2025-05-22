@@ -17,7 +17,7 @@ class Layer
 {
     private:
         Array<NumType, 2> input_save;
-        int saved_samples;
+        size_t saved_samples;
         bool momentum;
         std::random_device rd;
         std::mt19937 gen;
@@ -47,28 +47,28 @@ class Layer
             bias_size = this_layer;
             weight_size = prev_layer;
             weight_inner_size = this_layer;
-            size_t* weightShape = {prev_layer, this_layer};
+            size_t weightShape[2] = {prev_layer, this_layer};
             weights = Array<NumType, 2>(weightShape);
-            for(int i = 0; i < this_layer; i++){
+            for(size_t i = 0; i < this_layer; i++){
                 biases[i] = 0.0f;
             }
-            for(int i = 0; i < prev_layer; i++){
-                for(int j = 0; j < this_layer; j++){
+            for(size_t i = 0; i < prev_layer; i++){
+                for(size_t j = 0; j < this_layer; j++){
                     weights[i][j]= 0.5f*dis(gen);
                 }
             }
             momentum = momentumVal;
         }
-        Array<NumType, 2> forward(NumType** input, int samples){
+        Array<NumType, 2> forward(Array<NumType, 2> input, size_t samples){
             saved_samples = samples;
-            size_t* outputsShape = {samples, bias_size};
+            size_t outputsShape[2] = {samples, bias_size};
             outputs = Array<NumType, 2>(outputsShape);
-            size_t* arr = {samples, weight_size};
+            size_t arr[2] = {samples, weight_size};
             input_save = Array<NumType, 2>(arr);
-            for(int k = 0; k < samples; k++){                
-                for(int i = 0; i < bias_size; i++){
+            for(size_t k = 0; k < samples; k++){                
+                for(size_t i = 0; i < bias_size; i++){
                     outputs[k][i] = 0.0f;
-                    for(int j = 0; j < weight_size; j++){
+                    for(size_t j = 0; j < weight_size; j++){
                         outputs[k][i] += input[k][j] * weights[j][i];
                         input_save[k][j] = input[k][j];
                     }
@@ -84,19 +84,19 @@ class Layer
             }*/
 
             dbiases = Array<NumType, 1>(bias_size);
-            for(int j = 0; j < bias_size; j++){
+            for(size_t j = 0; j < bias_size; j++){
                     dbiases[j] = dvalues[0][j];
             }
-            for(int i = 1; i < saved_samples; i++){ // colARowB
-                for(int j = 0; j < weight_inner_size; j++){ // colB
+            for(size_t i = 1; i < saved_samples; i++){ // colARowB
+                for(size_t j = 0; j < weight_inner_size; j++){ // colB
                     dbiases[j] += dvalues[i][j];
                 }
             }
 
-            if (dweights != nullptr) {
+            /*if (dweights != nullptr) {
                 clearMatrix(dweights, weight_size);  // Free previously allocated dweights
                 dweights = nullptr;
-            }
+            }*/
             dweights = input_save * (dvalues.transpose());
             //dweights = matrixDotTransposeProduct(input_save, dvalues, saved_samples, weight_size, weight_inner_size);
 

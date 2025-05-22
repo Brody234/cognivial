@@ -3,19 +3,19 @@
 
 template <typename NumType = float>
 struct DataSetMultiClassNeurons{
-    NumType** x_values;
-    int** y_values;
+    Array<NumType, 2> x_values;
+    Array<int, 1> y_values;
 };
 
 template <typename NumType = float>
 struct DataSetSingleClassNeurons{
-    NumType** x_values;
-    int* y_values;
+    Array<NumType, 2> x_values;
+    Array<int, 1> y_values;
 };
 template <typename NumType = float>
 struct DataSetNoClassNeurons{
-    NumType** x_values;
-    NumType** y_values;
+    Array<NumType, 2> x_values;
+    Array<NumType, 2> y_values;
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include <iostream>
 
 template <typename NumType = float>
-NumType accuracy(NumType** softmax_output, int* correct_predictions, int samples, int output_layer){
+NumType accuracy(Array<NumType, 2> softmax_output, Array<int, 1> correct_predictions, int samples, int output_layer){
     int* predictions = new int[samples];
     int total = 0;
     for(int i = 0; i < samples; i++){

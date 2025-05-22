@@ -4,17 +4,17 @@
 #include "../testdata/dataset.hpp"
 
 template <typename NumType = float>
-DataSetSingleClassNeurons<NumType> createLinearSamples(int num_samples){
+DataSetSingleClassNeurons<NumType> createLinearSamples(size_t num_samples){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<NumType> rand(-1.0f, 1.0f);
     DataSetSingleClassNeurons<NumType> dataset;
-    dataset.x_values = new NumType*[num_samples];
-    dataset.y_values = new int[num_samples];
+    size_t xShape[2] = {num_samples, 2};
+    dataset.x_values = Array<NumType, 2>(xShape);
+    dataset.y_values = Array<int, 1>(num_samples);
     int onecount = 0;
     int zerocount = 0;
-    for(int i = 0; i < num_samples; i++){
-        dataset.x_values[i] = new NumType[2];
+    for(size_t i = 0; i < num_samples; i++){
         dataset.x_values[i][0] = rand(gen);
         dataset.x_values[i][1] = rand(gen);
         if(dataset.x_values[i][0]<=dataset.x_values[i][1]){
@@ -29,7 +29,7 @@ DataSetSingleClassNeurons<NumType> createLinearSamples(int num_samples){
 }
 
 template <typename NumType = float>
-DataSetSingleClassNeurons<NumType> createLinearSamplesEven(int num_samples){
+DataSetSingleClassNeurons<NumType> createLinearSamplesEven(size_t num_samples){
     std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<NumType> rand(-1.0f, 1.0f);
@@ -49,7 +49,7 @@ DataSetSingleClassNeurons<NumType> createLinearSamplesEven(int num_samples){
         
         
     }
-    for(int i = num_samples/2; i < num_samples; i++){
+    for(size_t i = num_samples/2; i < num_samples; i++){
         dataset.x_values[i] = new NumType[2];
         dataset.x_values[i][0] = rand(gen);
         std::uniform_real_distribution<NumType> randy(-1.0f, dataset.x_values[i][0]);
@@ -62,7 +62,7 @@ DataSetSingleClassNeurons<NumType> createLinearSamplesEven(int num_samples){
 }
 
 template <typename NumType = float>
-DataSetSingleClassNeurons<NumType> createQ1Q3SamplesEven(int num_samples){
+DataSetSingleClassNeurons<NumType> createQ1Q3SamplesEven(size_t num_samples){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<NumType> rand(0.0f, 1.0f);
@@ -80,7 +80,7 @@ DataSetSingleClassNeurons<NumType> createQ1Q3SamplesEven(int num_samples){
         
         
     }
-    for(int i = num_samples/2; i < num_samples; i++){
+    for(size_t i = num_samples/2; i < num_samples; i++){
         dataset.x_values[i] = new NumType[2];
         dataset.x_values[i][0] = -rand(gen);
         dataset.x_values[i][1] = -rand(gen);
@@ -92,7 +92,7 @@ DataSetSingleClassNeurons<NumType> createQ1Q3SamplesEven(int num_samples){
 }
 
 template <typename NumType = float>
-DataSetNoClassNeurons<NumType> createLinearSamplesEvenYTrue2xS(int num_samples){
+DataSetNoClassNeurons<NumType> createLinearSamplesEvenYTrue2xS(size_t num_samples){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<NumType> rand(-1.0f, 1.0f);
