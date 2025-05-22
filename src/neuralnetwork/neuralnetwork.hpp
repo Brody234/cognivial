@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
 
+// Matrix
+#include "../matrix/matrix.hpp"
+
 // Utilities
 #include "utilities/matrixutility.hpp"
 #include "utilities/networkutility.hpp"

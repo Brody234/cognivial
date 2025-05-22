@@ -31,6 +31,8 @@ class Array {
         std::size_t* shape;
     // Essential functions for basic array functionality
 
+        // Create an empty array object for class declarations
+        Array();
         // For users to create a new array.
         Array(const std::size_t* s);
 
@@ -168,6 +170,9 @@ class Array<ArrType, 1> {
         // Number of datapoints in this array/subarray.
         std::size_t len;
     // Essential to array functionality.
+        // Create an empty array
+        Array();
+
         // Creates the array using a 1D array.
         Array(const std::size_t* s);
 
@@ -250,5 +255,6 @@ class Array<ArrType, 1> {
 };
 
 // The file I actually implemented this stuff in.
-#include "array.tpp"
+#include "arraynd.tpp"
+#include "array1d.tpp"
 #endif
