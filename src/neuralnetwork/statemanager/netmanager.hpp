@@ -52,7 +52,7 @@ class NetManager{
 
         //Adds a layer of int size neurons to the end
         void addLayerToEnd(int size){
-            LayerLite<NumType>* temp = new LayerLite<NumType>(prev_layer_size, size);
+            LayerLite<NumType>* temp = new LayerLite<NumType>(prev_layer_size, size, false);
             layers.push_back(temp);
             ActivationLinear<NumType>* lin = new ActivationLinear<NumType>();
             activations.push_back(lin);
@@ -156,7 +156,9 @@ class NetManager{
         // Adds a ReLU activation function to an index, y = max(x, minimum).
         void addReLUToIndex(int index){
             if(index < 0 || index > activations.size()){
-                index = activations.size()-1;
+                ActivationReLU<NumType>* relu = new ActivationReLU<NumType>();
+                activations.push_back(relu);
+                return;
             }
             ActivationReLU<NumType>* relu = new ActivationReLU<NumType>();
             clearIndex(index);

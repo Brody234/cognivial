@@ -11,7 +11,7 @@ class ActivationSigmoid : public BaseActivation<NumType>
         int saved_samples;
         int saved_prev_layer;
     public:
-        NumType** forwardTest(NumType** inputs, int samples, int prev_layer) override{
+        NumType** forward(NumType** inputs, int samples, int prev_layer) override{
             saved_samples = samples;
             saved_prev_layer = prev_layer;
             if(samples <= 0){

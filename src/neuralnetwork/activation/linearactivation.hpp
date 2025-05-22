@@ -23,7 +23,7 @@ class ActivationLinear : public BaseActivation<NumType>
             m = mVal;
             b = bVal;
         }
-        NumType** forwardTest(NumType** inputs, int samples, int prev_layer) override{
+        NumType** forward(NumType** inputs, int samples, int prev_layer) override{
             if(samples <= 0){
                 return new NumType*[0];
             }

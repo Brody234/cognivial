@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../layer/layerlite.hpp"
+#include "../layer/layer.hpp"
 
 template <typename NumType = float>
 class OptimizerRandom
@@ -20,7 +20,7 @@ class OptimizerRandom
         std::uniform_real_distribution<NumType> dis;
 
     public:
-        OptimizerRandom(NumType learning_rateVal, LayerLite<NumType>* layer)
+        OptimizerRandom(NumType learning_rateVal, Layer<NumType>* layer)
         :
         gen(rd()),
         dis(-1.0f, 1.0f)
@@ -34,7 +34,7 @@ class OptimizerRandom
         }
         
 
-        void optimize_layer(LayerLite<NumType>* layer, NumType acc){
+        void optimize_layer(Layer<NumType>* layer, NumType acc){
         if(acc < best_loss){
             //std::cout << "New best" << std::endl;
             clearMatrix(bestweights, layer->weight_size);

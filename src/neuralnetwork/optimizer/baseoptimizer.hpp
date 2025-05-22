@@ -6,7 +6,7 @@ class BaseOptimizer {
 public:
     virtual ~BaseOptimizer() = default;
 
-    virtual void optimize_layer(LayerLite<NumType>* layer) = 0;
+    virtual void optimize_layer(Layer<NumType>* layer) = 0;
     
     virtual void optimize_prelu(ActivationPReLU<NumType>* prelu) = 0;
 

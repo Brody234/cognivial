@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../layer/layerlite.hpp"
+#include "../layer/layer.hpp"
 
 template <typename NumType = float>
 class OptimizerSGD : public BaseOptimizer<NumType>
@@ -47,7 +47,7 @@ class OptimizerSGD : public BaseOptimizer<NumType>
             learning_rate = original_learning_rate*(1.0f/(1.0f + decay * iterations));
             iterations++;
         }
-        void optimize_layer(LayerLite<NumType>* layer) override{
+        void optimize_layer(Layer<NumType>* layer) override{
             if(momentum){
                 
             }

@@ -1,4 +1,10 @@
 #pragma once
+#include <iostream>
+
+// Utilities
+#include "utilities/matrixutility.hpp"
+#include "utilities/networkutility.hpp"
+#include "utilities/vectorutility.hpp"
 
 // Activations
 #include "activation/baseactivation.hpp"
@@ -11,7 +17,7 @@
 #include "activation/stepactivation.hpp"
 
 // Layer
-#include "layer/layerlite.hpp"
+#include "layer/layer.hpp"
 
 // Losses
 #include "loss/baseloss.hpp"
@@ -25,17 +31,12 @@
 #include "optimizer/randomoptimizer.hpp"
 #include "optimizer/sgdoptimizer.hpp"
 
-// Managers
-#include "statemanager/netmanager.hpp"
-#include "statemanager/linkedmanager.hpp"
-
 // Test Data
 #include "testdata/dataset.hpp"
 #include "testdata/generatedata.hpp"
 #include "testdata/generatenumbers.hpp"
 #include "testdata/viewer.hpp"
 
-// Utilities
-#include "utilities/matrixutility.hpp"
-#include "utilities/networkutility.hpp"
-#include "utilities/vectorutility.hpp"
+// Managers
+//#include "statemanager/netmanager.hpp"
+//#include "statemanager/linkedmanager.hpp"

@@ -1,5 +1,5 @@
-#ifndef LAYERLITE_H
-#define LAYERLITE_H
+#ifndef LAYER_H
+#define LAYER_H
 
 #include <random>
 #include <exception>
@@ -10,7 +10,7 @@
 #include "../testdata/viewer.hpp"
 
 template <typename NumType = float>
-class LayerLite
+class Layer
 {
     private:
         NumType** input_save;
@@ -35,7 +35,7 @@ class LayerLite
         int weight_size;
         int weight_inner_size;
 
-        LayerLite(int prev_layer, int this_layer, bool momentumVal)
+        Layer(int prev_layer, int this_layer, bool momentumVal)
         : 
         dis(-sqrt(6.0f/(prev_layer+this_layer)), sqrt(6.0f/(prev_layer+this_layer)))
         {
@@ -56,7 +56,7 @@ class LayerLite
             }
             momentum = momentumVal;
         }
-        NumType** forwardTest(NumType** input, int samples){
+        NumType** forward(NumType** input, int samples){
             saved_samples = samples;
             outputs = new NumType*[samples];
             input_save = new NumType*[samples];

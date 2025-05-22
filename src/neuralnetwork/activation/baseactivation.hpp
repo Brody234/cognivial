@@ -10,7 +10,7 @@ public:
 
     NumType** dinputs = nullptr;
 
-    virtual NumType** forwardTest(NumType** inputs, int samples, int prev_layer) = 0;
+    virtual NumType** forward(NumType** inputs, int samples, int prev_layer) = 0;
 
     virtual NumType** backward(NumType** dvalues) = 0;
     
