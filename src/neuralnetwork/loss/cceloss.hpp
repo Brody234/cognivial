@@ -35,7 +35,9 @@ class LossCCE : public BaseLoss<NumType>
                 totals[i] = copiedMatrix[i][actualMatrix[i]];
             }
             //delete[] vector;
+            //std::cout << totals.toString() << std::endl;
             vector = vectorLogNeg(totals, samples);
+            //std::cout << vector.toString() << std::endl;
             NumType mean = vectorMean(vector, samples);
 
             clearMatrix(copiedMatrix, samples);

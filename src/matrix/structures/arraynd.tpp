@@ -45,6 +45,41 @@ Array<ArrType, dims>::Array(const std::size_t* s)
     data = new ArrType[total]();
 }
 
+// copy constructor
+template <typename ArrType, size_t dims>
+Array<ArrType, dims>::Array(Array<ArrType, dims> const& other){
+    owns = true;
+
+    auto tmp = other.copy();
+    size_t total = 1;
+
+    shape = new size_t[dims];
+    stride = new size_t[dims];
+
+    for(size_t i = 0; i < dims; i++){
+        shape[i] = tmp.shape[i];
+        total*=shape[i];
+    }
+    stride[dims-1] = 1;
+    for (long i = dims-2; i >= 0; --i)
+        stride[i] = shape[i+1] * stride[i+1];
+    
+    data = new ArrType[total];
+    
+    for(size_t i = 0; i < total; i++){
+        size_t* idx = new size_t[dims];
+        size_t newI = i;
+        size_t loc = 0;
+        for (int k = dims - 1; k >= 0; --k) {
+            loc   += tmp.stride[k] * (newI % tmp.shape[k]);
+            newI  /= tmp.shape[k];
+        }
+
+        data[i] = tmp.data[loc];
+    }
+
+}
+
 //delete
 template <typename ArrType, std::size_t dims>
 Array<ArrType, dims>::~Array() {
@@ -333,7 +368,6 @@ Array<ArrType, dims> Array<ArrType, dims>::operator*(const Array<ArrType, dims>&
     auto BColMajor = B.transpose();
     for(size_t i = 0; i < B.shape[1]; i++){
         auto col = (*this)*BColMajor[i];
-        std::cout << col.toString() << std::endl;
         for(size_t j = 0; j < shape[0]; j++){
             C[j][i] = col[j][0];
         }
@@ -353,14 +387,16 @@ Array<ArrType, dims> Array<ArrType, dims>::operator*(const Array<ArrType, 1>& ve
     size_t newShape[2] = { shape[0], 1 };
     Array<ArrType, dims> col(newShape);
     for(size_t i = 0; i < shape[0]; i++){
-        std::cout << i << std::endl;
         col[i][0] = (*this)[i]*vector;
     }
     return col;
 }
 
 template <typename ArrType, size_t dims>
-Array<ArrType, dims> Array<ArrType, dims>::operator=(const Array<ArrType, dims> matrix){
+Array<ArrType, dims>& Array<ArrType, dims>::operator=(Array<ArrType, dims> const& matrix){
+    if (this == &matrix) 
+        return *this;
+
     if(owns){
         delete [] data;
         delete [] stride;
@@ -372,13 +408,14 @@ Array<ArrType, dims> Array<ArrType, dims>::operator=(const Array<ArrType, dims> 
     size_t* newShape =  new size_t[dims];
     newStrides[dims-1] = 1;
     for(size_t i = 0; i < dims; i++){
+        newShape[i] = copiedMatrix.shape[i];
         total *= copiedMatrix.shape[i];
     }
     bool unchanged = true;
     // i is a long here because size_t is unsigned so decrementing it results in an underflow (it's always geq 0).
     for(long i = dims-2; i >= 0; i--){
-        newStrides[i] = shape[i+1]*newStrides[i+1];
-        if(stride[i] != shape[i+1]*stride[i+1]){
+        newStrides[i] = copiedMatrix.shape[i+1]*newStrides[i+1];
+        if(copiedMatrix.stride[i] != copiedMatrix.shape[i+1]*copiedMatrix.stride[i+1]){
             unchanged = false;
         }
     }
@@ -388,22 +425,23 @@ Array<ArrType, dims> Array<ArrType, dims>::operator=(const Array<ArrType, dims> 
         return copyTurbo(total);
     }*/
 
-    ArrType* newData = new ArrType[total];
+    ArrType* data = new ArrType[total];
     for(size_t i = 0; i < total; i++){
         size_t* idx = new size_t[dims];
         size_t newI = i;
         size_t loc = 0;
         for (int k = dims - 1; k >= 0; --k) {
-            loc   += stride[k] * (newI % shape[k]);
-            newI  /= shape[k];
+            loc   += copiedMatrix.stride[k] * (newI % copiedMatrix.shape[k]);
+            newI  /= copiedMatrix.shape[k];
         }
 
-        newData[i] = matrix.data[loc];
+        data[i] = copiedMatrix.data[loc];
+        delete[] idx;
     }
-    data = newData;
-    owns = true;
-    shape = newShape;
-    stride = newStrides;
+    this->data = data;
+    this->owns = true;
+    this->shape = newShape;
+    this->stride = newStrides;
     return (*this);
 }
 #include "array1d.tpp"

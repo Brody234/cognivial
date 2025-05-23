@@ -37,6 +37,9 @@ class Array {
         // For users to create a new array.
         Array(const std::size_t* s);
 
+        // Copy constructor
+        Array(Array<ArrType, dims> const& other);
+
         // Frees memory.
         ~Array();
 
@@ -149,7 +152,7 @@ class Array {
          * Gives a matrix values of another matrix and transfers ownership
          * Becareful to not create a use after free with ownership transfer
          */
-        Array<ArrType, dims> operator=(const Array<ArrType, dims> matrix);
+        Array<ArrType, dims>& operator=(Array<ArrType, dims> const& matrix);
 };
 
 /*
@@ -185,6 +188,9 @@ class Array<ArrType, 1> {
 
         // Creates the array using a single value.
         Array(const std::size_t s);
+
+        // Copy constructor
+        Array(Array<ArrType, 1> const& other);
 
         // Deletes the array from memory.
         ~Array();
@@ -267,7 +273,7 @@ class Array<ArrType, 1> {
         /*
          * Assigns an array to a new array, transfers ownership of data
          */
-        Array<ArrType, 1> operator=(const Array<ArrType, 1>& vector);
+        Array<ArrType, 1>& operator=(const Array<ArrType, 1>& vector);
 
 };
 

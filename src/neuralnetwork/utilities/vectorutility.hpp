@@ -50,11 +50,10 @@ Array<NumType, 1> copyVector(Array<NumType, 1> vector, size_t components){
 
 template <typename NumType = float>
 Array<NumType, 1> vectorLogNeg(Array<NumType, 1> vector, size_t components){
-    Array<NumType, 1> newVect = copyVector(vector, components);
+    Array<NumType, 1> newVect = vector.copy();
+    
     for(size_t i = 0; i < components; i++){
-        //std::cout << vector[i] << std::endl;
         newVect[i] = -log(vector[i]);
-        //std::cout << vector[i] << std::endl;
     }
     return newVect;
 }

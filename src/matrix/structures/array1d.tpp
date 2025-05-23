@@ -37,6 +37,17 @@ Array<ArrType, 1>::Array(const std::size_t s){
     data = new ArrType[len]();
 }
 
+// copy constructor
+template <typename ArrType>
+Array<ArrType, 1>::Array(Array<ArrType, 1> const& other){
+    owns = true;
+    len = other.len;
+    stride = 1;
+    data = new ArrType[len];
+    for(size_t i = 0; i < len; i++){
+        data[i] = other[i];
+    }
+}
 
 // deletes the array
 template<typename ArrType>
@@ -162,14 +173,22 @@ Array<ArrType, 1> Array<ArrType, 1>::operator<=(const Array<ArrType, 1>& vector)
 
 
 template <typename ArrType>
-Array<ArrType, 1> Array<ArrType, 1>::operator=(const Array<ArrType, 1>& vector){
+Array<ArrType, 1>& Array<ArrType, 1>::operator=(const Array<ArrType, 1>& vector){
+    if(this == &vector){
+        return *this;
+    }
     if(owns){
         delete[] data;
     }
     auto const copiedVector = vector.copy();
-    data = copiedVector.data;
     len = copiedVector.len;
-    stride = copiedVector.stride;
+    stride = 1;
+    data = new ArrType[len];
+
+    for(size_t i = 0; i < len; i++){
+        data[i] = copiedVector[i];
+    }
+    owns = true;
     return *this;
 }
 

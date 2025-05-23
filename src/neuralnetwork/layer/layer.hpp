@@ -59,7 +59,7 @@ class Layer
             }
             momentum = momentumVal;
         }
-        Array<NumType, 2> forward(Array<NumType, 2> input, size_t samples){
+        Array<NumType, 2> forward(Array<NumType, 2> const& input, size_t samples){
             saved_samples = samples;
             size_t outputsShape[2] = {samples, bias_size};
             outputs = Array<NumType, 2>(outputsShape);
@@ -87,6 +87,7 @@ class Layer
             for(size_t j = 0; j < bias_size; j++){
                     dbiases[j] = dvalues[0][j];
             }
+
             for(size_t i = 1; i < saved_samples; i++){ // colARowB
                 for(size_t j = 0; j < weight_inner_size; j++){ // colB
                     dbiases[j] += dvalues[i][j];
@@ -97,7 +98,7 @@ class Layer
                 clearMatrix(dweights, weight_size);  // Free previously allocated dweights
                 dweights = nullptr;
             }*/
-            dweights = input_save * (dvalues.transpose());
+            dweights = (input_save.transpose()) * dvalues;
             //dweights = matrixDotTransposeProduct(input_save, dvalues, saved_samples, weight_size, weight_inner_size);
 
             //std::cout << "Layer w/ weights" << std::endl;
