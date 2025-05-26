@@ -24,7 +24,7 @@ class LossCCE : public BaseLoss<NumType>
         }
 
         
-        NumType forwardClass(Array<NumType, 2> outputMatrix, size_t samples, size_t output_neurons, Array<int, 1> actualMatrix) override{
+        NumType forwardClass(Array<NumType, 2>& outputMatrix, size_t samples, size_t output_neurons, Array<int, 1>& actualMatrix) override{
             saved_samples = samples;
 
             Array<NumType, 2> copiedMatrix = outputMatrix.copy(); //copyMatrix<NumType>(outputMatrix, samples, output_neurons);
@@ -47,7 +47,7 @@ class LossCCE : public BaseLoss<NumType>
         }
 
         // Each Output Neuron Identifies Classes
-        NumType forwardClass(Array<NumType, 2> outputMatrix, size_t samples, size_t output_neurons, Array<int, 2> actualMatrix) override {
+        NumType forwardClass(Array<NumType, 2>& outputMatrix, size_t samples, size_t output_neurons, Array<int, 2>& actualMatrix) override {
             saved_samples = samples;
             Array<NumType, 2> copiedMatrix = copyMatrix<NumType>(outputMatrix, samples, output_neurons);
 
@@ -67,7 +67,7 @@ class LossCCE : public BaseLoss<NumType>
             return mean;
         }
 
-        Array<NumType, 2> backwardClass(size_t output_neurons, Array<int, 1> y_true, Array<NumType, 2> softouts) override{
+        Array<NumType, 2> backwardClass(size_t output_neurons, Array<int, 1>& y_true, Array<NumType, 2>& softouts) override{
             /*if(this->dvalues != nullptr){
                 clearMatrix(this->dvalues, saved_samples);
                 this->dvalues = nullptr;
@@ -94,11 +94,11 @@ class LossCCE : public BaseLoss<NumType>
 
         // Just to keep this from being abstract/let managers easily switch from regression to classification without an object. Never called in manager and will break your code if you call directly.
 
-        NumType forwardRegress(Array<NumType, 2> outputMatrix, size_t samples, size_t output_neurons, Array<NumType, 2> actualMatrix) override{
+        NumType forwardRegress(Array<NumType, 2>& outputMatrix, size_t samples, size_t output_neurons, Array<NumType, 2>& actualMatrix) override{
             return 0.0;
         }
 
-        Array<NumType, 2> backwardRegress(Array<NumType, 2> y_pred, Array<NumType, 2> y_true) override{
+        Array<NumType, 2> backwardRegress(Array<NumType, 2>& y_pred, Array<NumType, 2>& y_true) override{
             return Array<NumType, 2>();
         }
 

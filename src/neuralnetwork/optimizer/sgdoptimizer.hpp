@@ -53,7 +53,7 @@ class OptimizerSGD : public BaseOptimizer<NumType>
             }
             else{
                 //NumType clip_value = 0.1f;
-                for(int i = 0; i < layer->weight_size; i++){
+                for(int i = 0; i < layer->weights.shape[0]; i++){
                     for(int j = 0; j < layer->weight_inner_size; j++){
                        /* if (layer->dweights[i][j] > clip_value) {
                             layer->dweights[i][j] = clip_value;
@@ -65,7 +65,7 @@ class OptimizerSGD : public BaseOptimizer<NumType>
                         
                     }
                 }
-                for(int i = 0; i < layer->bias_size; i++){
+                for(int i = 0; i < layer->biases.len; i++){
                     /*if (layer->dbiases[i] > clip_value) {
                         layer->dbiases[i] = clip_value;
                     } else if (layer->dbiases[i] < -clip_value) {

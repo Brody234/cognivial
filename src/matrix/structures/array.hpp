@@ -1,5 +1,5 @@
-#ifndef ARRAYHEAD
-#define ARRAYHEAD
+#ifndef ARRAYHPP
+#define ARRAYHPP
 
 #include <cstddef>
 #include <stdexcept>

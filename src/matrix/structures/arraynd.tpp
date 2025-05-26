@@ -6,6 +6,12 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <thread>
+#include <vector>
+#include <functional>
+
+using std::vector;
+
 
 using std::size_t;
 /*
@@ -50,14 +56,13 @@ template <typename ArrType, size_t dims>
 Array<ArrType, dims>::Array(Array<ArrType, dims> const& other){
     owns = true;
 
-    auto tmp = other.copy();
     size_t total = 1;
 
     shape = new size_t[dims];
     stride = new size_t[dims];
 
     for(size_t i = 0; i < dims; i++){
-        shape[i] = tmp.shape[i];
+        shape[i] = other.shape[i];
         total*=shape[i];
     }
     stride[dims-1] = 1;
@@ -70,11 +75,11 @@ Array<ArrType, dims>::Array(Array<ArrType, dims> const& other){
         size_t newI = i;
         size_t loc = 0;
         for (int k = dims - 1; k >= 0; --k) {
-            loc   += tmp.stride[k] * (newI % tmp.shape[k]);
-            newI  /= tmp.shape[k];
+            loc   += other.stride[k] * (newI % other.shape[k]);
+            newI  /= other.shape[k];
         }
 
-        data[i] = tmp.data[loc];
+        data[i] = other.data[loc];
     }
 
 }
@@ -348,6 +353,18 @@ Array<ArrType, dims> Array<ArrType, dims>::zeros(){
     return Array<ArrType, dims>(shape);
 }
 
+// Dot product nxm matrix dot (m length vector)^T, vector treated as a column, returns nx1 matrix, used for multithreading
+template <typename ArrType>
+void dotVector(const Array<ArrType, 1>& vector, const Array<ArrType, 2>& A, Array<ArrType, 2>& C, size_t i){
+    if(A.shape[1] != vector.len){
+        throw std::length_error("Shape Error: Vector length must be length of rows in matrix");
+    }
+    size_t newShape[2] = { A.shape[0], 1 };
+    for(size_t j = 0; j < A.shape[0]; j++){
+        C[j][i] = A[j]*vector;
+    }
+    
+}
 
 //The following two functions are poorly implemented and need to be seriously reworked for large scale use cases, but I wanted to get them working so I could rebuild /neuralnetwork on them, then rework them
 // Dot product of 2 2D Matrices
@@ -362,12 +379,25 @@ Array<ArrType, dims> Array<ArrType, dims>::operator*(const Array<ArrType, dims>&
     size_t newShape[2] = { shape[0], B.shape[1] };
     Array<ArrType, 2> C(newShape);
     auto BColMajor = B.transpose();
+    /*vector<std::thread> threads;
+    threads.reserve(BColMajor.shape[0]);*/
+
     for(size_t i = 0; i < B.shape[1]; i++){
+
+        /*threads.emplace_back([&, i](){
+            dotVector<ArrType>(BColMajor[i], *this, C, i);
+        });*/
         auto col = (*this)*BColMajor[i];
         for(size_t j = 0; j < shape[0]; j++){
             C[j][i] = col[j][0];
         }
     }
+    /*
+    for(std::thread &t : threads){
+        if(t.joinable()){
+            t.join();
+        }
+    }*/
     return C;
 }
 
@@ -398,20 +428,19 @@ Array<ArrType, dims>& Array<ArrType, dims>::operator=(Array<ArrType, dims> const
         delete [] stride;
         delete [] shape;
     }
-    auto const copiedMatrix = matrix.copy();
     size_t total = 1;
     size_t* newStrides = new size_t[dims];
     size_t* newShape =  new size_t[dims];
     newStrides[dims-1] = 1;
     for(size_t i = 0; i < dims; i++){
-        newShape[i] = copiedMatrix.shape[i];
-        total *= copiedMatrix.shape[i];
+        newShape[i] = matrix.shape[i];
+        total *= matrix.shape[i];
     }
     bool unchanged = true;
     // i is a long here because size_t is unsigned so decrementing it results in an underflow (it's always geq 0).
     for(long i = dims-2; i >= 0; i--){
-        newStrides[i] = copiedMatrix.shape[i+1]*newStrides[i+1];
-        if(copiedMatrix.stride[i] != copiedMatrix.shape[i+1]*copiedMatrix.stride[i+1]){
+        newStrides[i] = matrix.shape[i+1]*newStrides[i+1];
+        if(matrix.stride[i] != matrix.shape[i+1]*matrix.stride[i+1]){
             unchanged = false;
         }
     }
@@ -426,11 +455,11 @@ Array<ArrType, dims>& Array<ArrType, dims>::operator=(Array<ArrType, dims> const
         size_t newI = i;
         size_t loc = 0;
         for (int k = dims - 1; k >= 0; --k) {
-            loc   += copiedMatrix.stride[k] * (newI % copiedMatrix.shape[k]);
-            newI  /= copiedMatrix.shape[k];
+            loc   += matrix.stride[k] * (newI % matrix.shape[k]);
+            newI  /= matrix.shape[k];
         }
 
-        d[i] = copiedMatrix.data[loc];
+        d[i] = matrix.data[loc];
     }
     this->data = d;
     this->owns = true;

@@ -7,13 +7,13 @@
 
 // Deletes a matrix from memory.
 template <typename NumType = float>
-void clearMatrix(Array<NumType, 2> matrix, int row){
+void clearMatrix(Array<NumType, 2>& matrix, int row){
     return;
 }
 
 // Creates an identical matrix with copied values on a different address.
 template <typename NumType = float>
-Array<NumType, 2> copyMatrix(Array<NumType, 2> matrix, int row, int col){
+Array<NumType, 2> copyMatrix(Array<NumType, 2>& matrix, int row, int col){
     return matrix.copy();
 }
 
@@ -38,7 +38,7 @@ NumType matrixMean(NumType** matrix, int row, int col){
 
 // Takes every value in a matrix and clips it between maxClip - e^-50 and minClip + e^-50.
 template <typename NumType = float>
-Array<NumType, 2> matrixClip(Array<NumType, 2> matrix, int row, int col, NumType maxClip, NumType minClip){
+Array<NumType, 2> matrixClip(Array<NumType, 2>& matrix, int row, int col, NumType maxClip, NumType minClip){
     NumType clipper = 1e-7;
     maxClip -= clipper;
     minClip += clipper;
@@ -79,7 +79,7 @@ NumType** matrixLogNeg(NumType** matrix, int row, int col){
 
 // Returns a vector of length rows, each component is the inverse log of it's respective row.
 template <typename NumType = float>
-Array<NumType, 1> matrixLogNegVectorSum(Array<NumType, 2> matrix, int row, int col){
+Array<NumType, 1> matrixLogNegVectorSum(Array<NumType, 2>& matrix, int row, int col){
     Array<NumType, 1> vectorSum(row);
     //std::cout << "row " << row << " col " << col << std::endl;
     for(int i = 0; i < row; i++){

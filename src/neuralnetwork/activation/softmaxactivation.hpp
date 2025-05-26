@@ -11,7 +11,7 @@ class ActivationSoftMax : public BaseActivation<NumType>
         size_t saved_samples;
         size_t saved_prev_layer;
     public:
-        Array<NumType, 2> forward(Array<NumType, 2> inputs, size_t samples, size_t prev_layer) override{
+        Array<NumType, 2> forward(Array<NumType, 2>& inputs, size_t samples, size_t prev_layer) override{
             //matrixViewer(inputs, samples, prev_layer);
             saved_samples = samples;
             saved_prev_layer = prev_layer;
@@ -45,7 +45,7 @@ class ActivationSoftMax : public BaseActivation<NumType>
             }
             return this->outputs;
         }
-        Array<NumType, 2> backward(Array<NumType, 2> dvalues) override{
+        Array<NumType, 2> backward(Array<NumType, 2>& dvalues) override{
             size_t dinputsShape[2] = {saved_samples, saved_prev_layer};
             this->dinputs = Array<NumType, 2>(dinputsShape);
             for(int i = 0; i < saved_samples; i++){

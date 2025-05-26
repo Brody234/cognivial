@@ -19,7 +19,7 @@ class ActivationLeakyReLU : public BaseActivation<NumType>
             minimum = minimumVal;
             alpha = alphaVal;
         }
-        Array<NumType, 2> forward(Array<NumType,2> inputs, size_t samples, size_t prev_layer) override{
+        Array<NumType, 2> forward(Array<NumType,2>& inputs, size_t samples, size_t prev_layer) override{
             if(samples <= 0){
                 return Array<NumType, 2>();
             }
@@ -42,7 +42,7 @@ class ActivationLeakyReLU : public BaseActivation<NumType>
             //matrixViewer(saved_inputs, samples, prev_layer);
             return this->outputs;
         }
-        Array<NumType, 2> backward(Array<NumType, 2> dvalues) override{
+        Array<NumType, 2> backward(Array<NumType, 2>& dvalues) override{
             /*if(this->dinputs != nullptr){
                 clearMatrix(this->dinputs, saved_samples);
                 this->dinputs = nullptr;
