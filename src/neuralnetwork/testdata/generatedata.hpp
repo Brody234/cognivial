@@ -127,17 +127,17 @@ DataSetNoClassNeurons<NumType> createLinearSamplesEvenYTrue2xS(size_t num_sample
 }
 
 template <typename NumType = float>
-DataSetNoClassNeurons<NumType> createXTimesYSet(int num_samples){
+DataSetNoClassNeurons<NumType> createXTimesYSet(size_t num_samples){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<NumType> rand(-1.0f, 1.0f);
     DataSetNoClassNeurons<NumType> dataset;
-    dataset.x_values = new NumType*[num_samples];
-    dataset.y_values = new NumType*[num_samples];
+    size_t xShape[2] = {num_samples, 2};
+    size_t yShape[2] = {num_samples, 1};
+    dataset.x_values = Array<NumType, 2>(xShape);
+    dataset.y_values = Array<NumType, 2>(yShape);
 
-    for(int i = 0; i < num_samples; i++){
-        dataset.x_values[i] = new NumType[2];
-        dataset.y_values[i] = new NumType[1];
+    for(size_t i = 0; i < num_samples; i++){
         dataset.x_values[i][0] = rand(gen);
         dataset.x_values[i][1] = rand(gen);
         dataset.y_values[i][0] = dataset.x_values[i][0]*dataset.x_values[i][1];
