@@ -104,6 +104,8 @@ Array<ArrType, 2> Array<ArrType, 1>::transpose() const{
     strides[1] = 1;
 
     return Array<ArrType, 2>(data, strides, shape);
+    delete[] shape;
+    delete[] strides;
 }
 
 // copies the data into a new block of memory
@@ -161,7 +163,7 @@ ArrType Array<ArrType, 1>::operator*(const Array<ArrType, 1>& B) const{
 }
 
 template <typename ArrType>
-Array<ArrType, 1> Array<ArrType, 1>::operator<=(const Array<ArrType, 1>& vector){
+Array<ArrType, 1> Array<ArrType, 1>::operator<<(const Array<ArrType, 1>& vector){
     if(vector.len != len){
         std::length_error("Shape Error: Vectors must have equal length");
     }

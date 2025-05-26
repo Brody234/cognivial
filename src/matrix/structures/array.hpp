@@ -205,6 +205,16 @@ class Array<ArrType, 1> {
         : data(d), len(l), stride(s), owns(false)
         {}
 
+        /*
+         * Don't use this, it's for n dimensional arrays and only public for them.
+         * Your array will NOT free properly.
+         * If you set s to a non 1 value, you are setting yourself up for accessing memory you can't access.
+         * Best case, that is a crash, worst case you put a vulnerability into your code.
+         */ 
+        Array(std::size_t l, std::size_t s, ArrType* d, bool o)
+        : data(d), len(l), stride(s), owns(o)
+        {}
+
         // Accesses a value at an index, const.
         const ArrType& operator[](size_t idx) const;
 
@@ -268,7 +278,7 @@ class Array<ArrType, 1> {
         /*
          * Copies another array's data into an array
          */
-        Array<ArrType, 1> operator<=(const Array<ArrType, 1>& vector);
+        Array<ArrType, 1> operator<<(const Array<ArrType, 1>& vector);
 
         /*
          * Assigns an array to a new array, transfers ownership of data

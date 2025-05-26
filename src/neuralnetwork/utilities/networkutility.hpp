@@ -18,6 +18,7 @@ NumType accuracy(Array<NumType, 2> softmax_output, Array<int, 1> correct_predict
             total++;
         }
     }
+    delete[] predictions;
     return NumType(total)/samples;
 
 }

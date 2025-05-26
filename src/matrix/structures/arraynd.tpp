@@ -67,7 +67,6 @@ Array<ArrType, dims>::Array(Array<ArrType, dims> const& other){
     data = new ArrType[total];
     
     for(size_t i = 0; i < total; i++){
-        size_t* idx = new size_t[dims];
         size_t newI = i;
         size_t loc = 0;
         for (int k = dims - 1; k >= 0; --k) {
@@ -83,8 +82,9 @@ Array<ArrType, dims>::Array(Array<ArrType, dims> const& other){
 //delete
 template <typename ArrType, std::size_t dims>
 Array<ArrType, dims>::~Array() {
-    if(owns)
+    if(owns){
         delete[] data;
+    }
     delete[] stride;
     delete[] shape;
 }
@@ -225,7 +225,6 @@ Array<ArrType, dims> Array<ArrType, dims>::copy() const{
 
     ArrType* newData = new ArrType[total];
     for(size_t i = 0; i < total; i++){
-        size_t* idx = new size_t[dims];
         size_t newI = i;
         size_t loc = 0;
         for (int k = dims - 1; k >= 0; --k) {
@@ -236,6 +235,7 @@ Array<ArrType, dims> Array<ArrType, dims>::copy() const{
         newData[i] = data[loc];
     }
     return Array<ArrType, dims>(newData, newStrides, shape, true);
+    delete[] newStrides;
 }
 
 // copies data, shape and strides directly, with 0 checks for any edge cases.
@@ -245,7 +245,7 @@ Array<ArrType, dims> Array<ArrType, dims>::copyTurbo(std::size_t total) const{
     for(std::size_t i = 0; i < total; i++){
         newData[i] = data[i]; 
     }
-    return Array<ArrType, dims>(newData, stride, shape);
+    return Array<ArrType, dims>(newData, stride, shape, true);
 }
 
 // Scalar multiplication
@@ -272,9 +272,7 @@ void Array<ArrType, dims>::operator*=(ArrType num){
     }
 
     // Copied and pasted from copy()
-    ArrType* newData = new ArrType[total];
     for(size_t i = 0; i < total; i++){
-        size_t* idx = new size_t[dims];
         size_t newI = i;
         size_t loc = 0;
         for (int k = dims - 1; k >= 0; --k) {
@@ -321,9 +319,7 @@ void Array<ArrType, dims>::operator+=(ArrType num){
     }
 
     // Copied and pasted from copy()
-    ArrType* newData = new ArrType[total];
     for(size_t i = 0; i < total; i++){
-        size_t* idx = new size_t[dims];
         size_t newI = i;
         size_t loc = 0;
         for (int k = dims - 1; k >= 0; --k) {
@@ -425,9 +421,8 @@ Array<ArrType, dims>& Array<ArrType, dims>::operator=(Array<ArrType, dims> const
         return copyTurbo(total);
     }*/
 
-    ArrType* data = new ArrType[total];
+    ArrType* d = new ArrType[total];
     for(size_t i = 0; i < total; i++){
-        size_t* idx = new size_t[dims];
         size_t newI = i;
         size_t loc = 0;
         for (int k = dims - 1; k >= 0; --k) {
@@ -435,10 +430,9 @@ Array<ArrType, dims>& Array<ArrType, dims>::operator=(Array<ArrType, dims> const
             newI  /= copiedMatrix.shape[k];
         }
 
-        data[i] = copiedMatrix.data[loc];
-        delete[] idx;
+        d[i] = copiedMatrix.data[loc];
     }
-    this->data = data;
+    this->data = d;
     this->owns = true;
     this->shape = newShape;
     this->stride = newStrides;

@@ -49,7 +49,7 @@ class ActivationSoftMax : public BaseActivation<NumType>
             size_t dinputsShape[2] = {saved_samples, saved_prev_layer};
             this->dinputs = Array<NumType, 2>(dinputsShape);
             for(int i = 0; i < saved_samples; i++){
-                this->dinputs[i] <= dvalsXJacobian(this->outputs[i], saved_prev_layer, dvalues[i]); 
+                this->dinputs[i] << dvalsXJacobian(this->outputs[i], saved_prev_layer, dvalues[i]); 
                 //std::cout << "DINPUT OF SOFTMAX" << std::endl;
                 //std::cout << dinputs[i][0] << std::endl;
             }
