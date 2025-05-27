@@ -467,6 +467,32 @@ Array<ArrType, dims>& Array<ArrType, dims>::operator=(Array<ArrType, dims> const
     this->stride = newStrides;
     return (*this);
 }
+
+template <typename ArrType, size_t dims>
+ArrType Array<ArrType, dims>::max(){
+    ArrType max = (*this)[0].max();
+    for(size_t i = 1; i < shape[0]; i++){
+        ArrType temp = (*this)[i].max();
+        if(temp > max){
+            max = temp;
+        }
+    }
+    return max;
+}
+
+template <typename ArrType, size_t dims>
+ArrType Array<ArrType, dims>::min(){
+    ArrType min = (*this)[0].min();
+    for(size_t i = 1; i < shape[0]; i++){
+        ArrType temp = (*this)[i].min();
+        if(temp < min){
+            min = temp;
+        }
+    }
+    return min;
+}
+
+
 #include "array1d.tpp"
 
 #endif

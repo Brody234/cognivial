@@ -153,6 +153,17 @@ class Array {
          * Becareful to not create a use after free with ownership transfer
          */
         Array<ArrType, dims>& operator=(Array<ArrType, dims> const& matrix);
+
+        /*
+         * Returns the largest element.
+         */
+        ArrType max();
+
+        /*
+         * Returns the smallest element
+         */
+        ArrType min();
+
 };
 
 /*
@@ -284,6 +295,17 @@ class Array<ArrType, 1> {
          * Assigns an array to a new array, transfers ownership of data
          */
         Array<ArrType, 1>& operator=(const Array<ArrType, 1>& vector);
+
+        /*
+         * Returns the largest element, recursive base case for nd max
+         */
+        ArrType max();
+
+        /*
+         * Returns the smallest element, recursive base case for nd min
+         */
+        ArrType min();
+
 
 };
 

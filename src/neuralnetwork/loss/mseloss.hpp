@@ -11,8 +11,6 @@ template <typename NumType = float>
 class LossMSE : public BaseLoss<NumType>
 {
     private:
-        int saved_samples;
-        int saved_prev_layer;
 
     public:
         ~LossMSE() {
@@ -20,9 +18,7 @@ class LossMSE : public BaseLoss<NumType>
         }
 
         
-        NumType forwardRegress(NumType** outputMatrix, int samples, int prev_layer, NumType** actualMatrix) override{
-            saved_samples = samples;
-            saved_prev_layer = prev_layer;
+        NumType forwardRegress(Array<NumType, 2>& outputMatrix, size_t samples, size_t prev_layer, Array<NumType, 2>& actualMatrix) override{
             NumType sum = 0.0f;
 
             for(int i = 0; i < samples; i++){
@@ -36,14 +32,14 @@ class LossMSE : public BaseLoss<NumType>
             return mean;
         }
 
-        NumType** backwardRegress(NumType** y_pred, NumType** y_true) override{
-            this->dvalues = new NumType*[saved_samples];
+        Array<NumType, 2> backwardRegress(Array<NumType, 2>& y_pred, Array<NumType, 2>& y_true) override{
+            size_t shape[2] = {y_true.shape[0], y_true.shape[1]};
+            this->dvalues = Array<NumType, 2>(shape);
+            size_t elements = this->dvalues.shape[0]*this->dvalues.shape[1];
+            for(int i = 0; i < this->dvalues.shape[0]; i++){
 
-            for(int i = 0; i < saved_samples; i++){
-                this->dvalues[i] = new NumType[saved_prev_layer];
-
-                for(int j = 0; j < saved_prev_layer; j++){
-                    this->dvalues[i][j] = (2.0 / (saved_samples * saved_prev_layer)) * (y_pred[i][j] - y_true[i][j]);
+                for(int j = 0; j < this->dvalues.shape[1]; j++){
+                    this->dvalues[i][j] = (2.0 / (elements)) * (y_pred[i][j] - y_true[i][j]);
                 }
             }
             
@@ -54,16 +50,16 @@ class LossMSE : public BaseLoss<NumType>
 
 
         // Just to keep this from being abstract/let managers easily switch from regression to classification without an object.
-        NumType forwardClass(NumType** outputMatrix, int samples, int output_neurons, int** actualMatrix) override{
+        NumType forwardClass(Array<NumType, 2>& outputMatrix, size_t samples, size_t output_neurons, Array<int, 2>& actualMatrix) override{
             return 0.0;
         }
 
-        NumType forwardClass(NumType** outputMatrix, int samples, int output_neurons, int* actualMatrix) override{
+        NumType forwardClass(Array<NumType, 2>& outputMatrix, size_t samples, size_t output_neurons, Array<int, 1>& actualMatrix) override{
             return 0.0;
         }
                 
-        NumType** backwardClass(int output_neurons, int* y_true, NumType** softouts) override{
-            return new NumType*[0];
+        Array<NumType, 2> backwardClass(size_t output_neurons, Array<int, 1>& y_true, Array<NumType, 2>& softouts) override{
+            return Array<NumType, 2>();
         }
 
 };

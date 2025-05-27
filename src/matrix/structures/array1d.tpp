@@ -194,4 +194,26 @@ Array<ArrType, 1>& Array<ArrType, 1>::operator=(const Array<ArrType, 1>& vector)
     return *this;
 }
 
+template <typename ArrType>
+ArrType Array<ArrType, 1>::max(){
+    ArrType max = (*this)[0];
+    for(size_t i = 1; i < len; i++){
+        if(max < (*this)[i]){
+            max = (*this)[i];
+        }
+    }
+    return max;
+}
+
+template <typename ArrType>
+ArrType Array<ArrType, 1>::min(){
+    ArrType min = (*this)[0];
+    for(size_t i = 1; i < len; i++){
+        if(min > (*this)[i]){
+            min = (*this)[i];
+        }
+    }
+    return min;
+}
+
 #endif 
