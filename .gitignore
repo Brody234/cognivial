@@ -22,8 +22,12 @@ src/decisiontree/testcode.cpp
 #Node Stuff
 /.vscode/
 /node_modules/
-/build
 src/.vscode/ 
 .vscode/
 /nodejs/build/
 /nodejs/node_modules/
+
+#Build Stuff
+/build/objects
+/build/libcognivial.a
+

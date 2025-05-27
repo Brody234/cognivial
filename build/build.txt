@@ -1,0 +1,2 @@
+Run the make file to build an instance of the library.
+Currently only works on mac, this part is really just for me right now going to generalize soon.
