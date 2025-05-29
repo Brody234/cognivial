@@ -30,4 +30,5 @@ src/.vscode/
 #Build Stuff
 /build/objects
 /build/libcognivial.a
-
+/build/Cognivial/
+.DS_Store

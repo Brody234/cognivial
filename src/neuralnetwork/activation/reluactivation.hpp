@@ -9,6 +9,8 @@ class ActivationReLU : public BaseActivation<NumType>
         size_t saved_samples;
         size_t saved_prev_layer;
         NumType minimum;
+        std::vector<Array<NumType, 1>*> inputsRL;
+        std::vector<Array<NumType, 1>*> outputsRL;
     public:
         ActivationReLU(){
             minimum = 0.0f;
@@ -36,16 +38,47 @@ class ActivationReLU : public BaseActivation<NumType>
                     }
                 }
             }
-            //matrixViewer(saved_inputs, samples, prev_layer);
             return this->outputs;
         }
+
+        Array<NumType, 1> forwardRL(Array<NumType, 1>& input) override{
+            auto* saved = new Array<NumType, 1>(input.len);
+            this->saved_prev_layer = input.len;
+            auto* out = new Array<NumType, 1>(input.len);
+            for (size_t i = 0; i < input.len; i++) {
+                (*saved)[i] = input[i];
+                (*out)[i] = input[i] < minimum ? minimum : input[i];
+            }
+            inputsRL.push_back(saved);
+            outputsRL.push_back(out); 
+            return (*out); 
+        }
+
+        void endEpisodeRL() override{
+            size_t epSize = inputsRL.size();
+            size_t inArr[2] = {epSize, this->saved_prev_layer};
+            saved_inputs = Array<NumType, 2>(inArr);  
+            size_t outArr[2] =  {epSize, this->saved_prev_layer};
+            this->outputs = Array<NumType, 2>(outArr);
+
+            for(int i = 0; i < saved_prev_layer; i++){
+                for(int j = 0; j < epSize; j++){
+                    saved_inputs[i][j] = (*inputsRL[i])[j];
+                    this->outputs[i][j] = (*outputsRL[i])[j];
+                }
+                delete inputsRL[i];
+                delete outputsRL[i];
+            }
+            inputsRL.clear();
+            outputsRL.clear();
+        }
+
         Array<NumType, 2> backward(Array<NumType, 2>& dvalues) override{
-            /*if(this->dinputs != nullptr){
-                clearMatrix(this->dinputs, saved_samples);
-                this->dinputs = nullptr;
-            }*/
+
             size_t dinputsShape[2] = {saved_samples, saved_prev_layer};
             this->dinputs = Array<NumType, 2>(dinputsShape);
+
+            
             for(size_t i = 0; i < saved_samples; i++){
                 for(size_t j = 0; j < saved_prev_layer; j++){
                     if(saved_inputs[i][j] <= 0){
@@ -61,6 +94,7 @@ class ActivationReLU : public BaseActivation<NumType>
         void print() override{
             std::cout << " ReLU " << std::endl;
         }
+
 };
 
 #endif

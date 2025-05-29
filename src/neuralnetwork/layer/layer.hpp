@@ -7,6 +7,8 @@
 #include <exception>
 #include <iostream>
 #include <cmath>
+#include <vector>
+
 
 using std::size_t;
 #include "../../matrix/matrix.hpp"
@@ -19,11 +21,13 @@ template <typename NumType = float>
 class Layer
 {
     private:
-        Array<NumType, 2> input_save;
+        Array<NumType, 2> inputSave;
         bool momentum;
         std::random_device rd;
         std::mt19937 gen;
         std::uniform_real_distribution<NumType> dis;
+        std::vector<Array<NumType, 1>*> inputsRL;
+        std::vector<Array<NumType, 1>*> outputsRL;
 
     public:
         Array<NumType, 2> dinputs;
@@ -43,6 +47,10 @@ class Layer
         Array<NumType, 2> forward(Array<NumType, 2> const& input);
         
         Array<NumType, 2> backward(Array<NumType, 2>& dvalues);
+
+        Array<NumType, 1> forwardRL(Array<NumType, 1> const& input);
+        
+        void endEpisodeRL();
         /*
         void print_weights(){
             matrixViewer(weights, weights.shape[0], weight_inner_size);

@@ -10,11 +10,11 @@ template class Layer<double>;
 template class ActivationReLU<float>;
 template class ActivationReLU<double>;
 
-template class ActivationLeakyReLU<float>;
-template class ActivationLeakyReLU<double>;
+//template class ActivationLeakyReLU<float>;
+//template class ActivationLeakyReLU<double>;
 
-template class ActivationSoftMax<float>;
-template class ActivationSoftMax<double>;
+//template class ActivationSoftMax<float>;
+//template class ActivationSoftMax<double>;
 
 // Losses
 

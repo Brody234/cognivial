@@ -1,5 +1,13 @@
 # root/build/Makefile
 
+EXPORT_DIR := Cognivial
+EXPORT_INCLUDE := $(EXPORT_DIR)/Include
+EXPORT_LIB := $(EXPORT_DIR)/Lib/Mac
+PUBLIC_HEADERS := $(shell find $(SRC_DIR) -type f \( -name "*.hpp" -o -name "*.h" -o -name "*.tpp" \))
+
+INCLUDE_DIR := ../include
+PUBLIC_HEADERS := $(shell find $(SRC_DIR) -type f \( -name "*.hpp" -o -name "*.h" -o -name "*.tpp" \))
+
 CXX       := /opt/homebrew/opt/llvm/bin/clang++
 SDK_PATH  := $(shell xcrun --show-sdk-path)
 CXXFLAGS  := -std=c++20 -fsanitize=address -g \
@@ -42,5 +50,15 @@ $(OBJ_DIR)/instantiations.o: $(SRC_DIR)/instantiations.cpp
 clean:
 	rm -rf $(OBJ_DIR) $(DEPS) $(LIB)
 
-# Include dependency files for headers/.tpp
--include $(DEPS)
+.PHONY: all clean install
+
+all: $(LIB)
+
+install: all
+	@echo "[INSTALL] Headers → $(EXPORT_INCLUDE)"
+	@mkdir -p $(EXPORT_INCLUDE)
+	@rsync -a --include '*/' --include '*.hpp' --include '*.h' --include '*.tpp' --exclude '*' $(SRC_DIR)/ $(EXPORT_INCLUDE)/
+
+	@echo "[INSTALL] Library → $(EXPORT_LIB)"
+	@mkdir -p $(EXPORT_LIB)
+	@cp $(LIB) $(EXPORT_LIB)/
